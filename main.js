@@ -1,8 +1,8 @@
 const MongoClient = require("mongodb").MongoClient;
 const User = require("./user");
 const Visitor = require("./visitor.js");
-const Inmate = require("./inmate");
-const Visitorlog = require("./visitorlog")
+const Pet = require("./pet");
+const VisitorInfo = require("./visitorinfo")
 
 
 MongoClient.connect(
@@ -16,8 +16,8 @@ MongoClient.connect(
 	console.log('Connected to MongoDB');
 	User.injectDB(client);
 	Visitor.injectDB(client);
-	Inmate.injectDB(client);
-	Visitorlog.injectDB(client);
+	Pet.injectDB(client);
+	VisitorInfo.injectDB(client);
 })
 
 const express = require('express')
@@ -260,11 +260,11 @@ app.use(verifyToken);
 
 /**
  * @swagger
- * /register/Visitorlog:
+ * /register/VisitorInfo:
  *   post:
  *     security:
  *      - jwt: []
- *     description: Create Visitorlog
+ *     description: Create VisitorInfo
  *     tags:
  *     - Registration
  *     requestBody:
@@ -278,7 +278,7 @@ app.use(verifyToken);
  *                 type: integer
  *               username: 
  *                 type: string
- *               inmateno: 
+ *               pettype: 
  *                 type: string
  *               dateofvisit:
  *                 type: string
@@ -288,7 +288,7 @@ app.use(verifyToken);
  *                 type: string
  *               purpose:
  *                 type: string
- *               officerno:
+ *               apartmentno:
  *                 type: string
 
  *     responses:
@@ -299,11 +299,11 @@ app.use(verifyToken);
  */
 
 
- app.post('/register/visitorlog', async (req, res) => {
+ app.post('/register/visitorinfo', async (req, res) => {
 	console.log(req.body);
 
 	if (req.user.rank == "officer" || "security"){
-		const reg = await Visitorlog.register(req.body.logno, req.body.username, req.body.inmateno, req.body.dateofvisit, req.body.timein, req.body.timeout, req.body.purpose, req.body.officerno);
+		const reg = await VisitorInfo.register(req.body.logno, req.body.username, req.body.pettype, req.body.dateofvisit, req.body.timein, req.body.timeout, req.body.purpose, req.body.apartmentno);
 		res.status(200).send(reg)
 	}
 	else{
@@ -313,11 +313,11 @@ app.use(verifyToken);
 
 /**
  * @swagger
- * /register/inmate:
+ * /register/pet:
  *   post:
  *     security:
  *      - jwt: []
- *     description: Inmate Registration
+ *     description: Pet Registration
  *     tags:
  *     - Registration 
  *     requestBody:
@@ -327,17 +327,17 @@ app.use(verifyToken);
  *           schema: 
  *             type: object
  *             properties:
- *               inmateno: 
+ *               petno: 
  *                 type: string
- *               firstname: 
+ *               name: 
  *                 type: string
- *               lastname: 
+ *               species: 
  *                 type: string
  *               age:
  *                 type: integer
  *               gender:
  *                 type: string
- *               guilty:
+ *               characteristic:
  *                 type: string
  *              
  *     responses:
@@ -347,11 +347,11 @@ app.use(verifyToken);
  *         description: There is an error during registration , Please try again
  */
 
- app.post('/register/inmate', async (req,res)=>{
+ app.post('/register/pet', async (req,res)=>{
 	console.log(req.body)
 
 	if (req.user.rank == "officer"){
-		const reg = await Inmate.register(req.body.inmateno, req.body.firstname, req.body.lastname, req.body.age, req.body.gender, req.body.guilty );
+		const reg = await Inmate.register(req.body.petno, req.body.name, req.body.species, req.body.age, req.body.gender, req.body.characteristic );
 		res.status(200).send(reg)
 	}
 	else{
@@ -457,11 +457,11 @@ app.patch('/visitor/update', async (req, res) => {
 
 /**
  * @swagger
- * /inmate/update:
+ * /pet/update:
  *   patch:
  *     security:
  *      - jwt: []
- *     description: Inmate Update
+ *     description: Pet Update
  *     tags:
  *     - Modification
  *     requestBody:
@@ -471,17 +471,17 @@ app.patch('/visitor/update', async (req, res) => {
  *           schema: 
  *             type: object
  *             properties:
- *               inmateno: 
+ *               petno: 
  *                 type: string
- *               firstname: 
+ *               name: 
  *                 type: string
- *               lastname: 
+ *               species: 
  *                 type: string
  *               age:
  *                 type: integer
  *               gender:
  *                 type: string
- *               guilty:
+ *               characteristic:
  *                 type: string
  *     responses:
  *       200:
@@ -491,10 +491,9 @@ app.patch('/visitor/update', async (req, res) => {
  */
 
  app.patch('/inmate/update', async (req, res) => {
-	console.log(req.body);
 	if (req.user.rank == "officer"){
-		const update = await Inmate.update( req.body.inmateno, req.body.firstname, req.body.lastname, req.body.age, req.body.gender, req.body.guilty);
-		res.status(200).send(update)
+		const reg = await Inmate.register(req.body.petno, req.body.name, req.body.species, req.body.age, req.body.gender, req.body.characteristic );
+		res.status(200).send(reg)
 	}
 	else{
 		res.status(403).send("You are unauthorized")
@@ -503,11 +502,11 @@ app.patch('/visitor/update', async (req, res) => {
 
 /**
  * @swagger
- * /visitorlog/update:
+ * /visitorinfo/update:
  *   patch:
  *     security:
  *      - jwt: []
- *     description: Visitorlog Update
+ *     description: VisitorInfo Update
  *     tags:
  *     - Modification
  *     requestBody:
@@ -519,7 +518,9 @@ app.patch('/visitor/update', async (req, res) => {
  *             properties:
  *               logno:
  *                 type: integer
- *               inmateno: 
+ *               username: 
+ *                 type: string
+ *               pettype: 
  *                 type: string
  *               dateofvisit:
  *                 type: string
@@ -529,8 +530,9 @@ app.patch('/visitor/update', async (req, res) => {
  *                 type: string
  *               purpose:
  *                 type: string
- *               officerno:
+ *               apartmentno:
  *                 type: string
+
 
  *     responses:
  *       200:
@@ -539,12 +541,12 @@ app.patch('/visitor/update', async (req, res) => {
  *         description: There is an error during updating , Please try again
  */
 
- app.patch('/visitorlog/update', async (req, res) => {
+ app.patch('/register/visitorinfo', async (req, res) => {
 	console.log(req.body);
 
-	if (req.user.username == req.body.username){
-		const update = await Visitorlog.update(req.body.logno, req.body.inmateno, req.body.dateofvisit, req.body.timein, req.body.timeout, req.body.purpose, req.body.officerno);
-		res.status(200).send(update)
+	if (req.user.rank == "officer" || "security"){
+		const reg = await VisitorInfo.register(req.body.logno, req.body.username, req.body.pettype, req.body.dateofvisit, req.body.timein, req.body.timeout, req.body.purpose, req.body.apartmentno);
+		res.status(200).send(reg)
 	}
 	else{
 		res.status(403).send("You are unauthorized")
@@ -625,11 +627,11 @@ app.delete('/delete/visitor', async (req, res) => {
 
 /**
  * @swagger
- * /delete/Inmate:
+ * /delete/Pet:
  *   delete:
  *     security:
  *      - jwt: []
- *     description: Delete Inmate
+ *     description: Delete Pet
  *     tags:
  *     - Remove(delete)
  *     requestBody:
@@ -649,9 +651,9 @@ app.delete('/delete/visitor', async (req, res) => {
  *         description: There is an error during deleting , Please try again
  */
 
- app.delete('/delete/inmate', async (req, res) => {
+ app.delete('/delete/pet', async (req, res) => {
 	if (req.user.rank == "officer"){
-		const del = await Inmate.delete(req.body.inmateno)
+		const del = await Pet.delete(req.body.petno)
 		res.status(200).send(del)
 	}
 	else{
@@ -661,11 +663,11 @@ app.delete('/delete/visitor', async (req, res) => {
 
 /**
  * @swagger
- * /delete/visitorlog:
+ * /delete/visitorinfo:
  *   delete:
  *     security:
  *      - jwt: []
- *     description: Delete Visitorlog
+ *     description: Delete VisitorInfo
  *     tags:
  *     - Remove(delete)
  *     requestBody:
@@ -685,9 +687,9 @@ app.delete('/delete/visitor', async (req, res) => {
  *         description: There is an error during deleting , Please try again
  */
 
- app.delete('/delete/visitorlog', async (req, res) => {
+ app.delete('/delete/visitorinfo', async (req, res) => {
 	if (req.user.rank == "officer" || "security"){
-		const del = await Visitorlog.delete(req.body.logno)
+		const del = await VisitorInfo.delete(req.body.logno)
 		res.status(200).send(del)
 	}
 	else{
