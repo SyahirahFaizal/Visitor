@@ -22,7 +22,7 @@ MongoClient.connect(
 
 const express = require('express')
 const app = express()
-const port = process.env.PORT || 3030
+const port = process.env.PORT || 3000
 
 const jwt = require ('jsonwebtoken');
 function generateAccessToken(payload){
@@ -695,6 +695,6 @@ app.delete('/delete/visitor', async (req, res) => {
 	}
 })
 
-// app.listen(port, () => {
-// 	console.log(Example app listening at http://localhost:${port})
-// });
+app.listen(port, () => {
+	console.log(`Example app listening at http://localhost:${port}`)
+})
