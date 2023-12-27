@@ -56,7 +56,7 @@ const options = {
 	definition: {
 		openapi: '3.0.0',
 		info: {
-			title: 'Prison Visitor Management System group4',
+			title: 'Group 4 Apartment Visiting System',
 			version: '1.0.0',
 		},
 		components:{

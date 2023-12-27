@@ -28,9 +28,9 @@ class VisitorInfo {
             return { status: "Succesfully register visitorinfo"}
 	}
 
-		static async update(logno, username, pettype, dateofvisit, timein, timeout, purpose, apartmentno){
+		static async update(logno, dateofvisit, timein, timeout, purpose, apartmentno){
 				return visitorinfo.updateOne({ Logno: logno },{$set:{
-					"PetNo": petno,
+					"Logno": logno,
 							"Dateofvisit": dateofvisit,
 							"Timein": timein,
 							"Timeout": timeout,			
