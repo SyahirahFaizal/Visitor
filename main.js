@@ -1,10 +1,4 @@
-const express = require('express')
-const app = express()
-const port = process.env.PORT || 3000
-
-const { MongoClient, ServerApiVersion } = require('mongodb');
-const jwt = require('jsonwebtoken');
-const bodyParser = require('body-parser');
+const MongoClient = require("mongodb").MongoClient;
 const User = require("./user");
 const Visitor = require("./visitor.js");
 const Inmate = require("./inmate");
@@ -13,7 +7,7 @@ const Visitorlog = require("./visitorlog")
 
 MongoClient.connect(
 	// TODO: Connection 
-	"mongodb://anitagobinathan19:anita1923@ac-3qil6d5-shard-00-00.xmughkp.mongodb.net:27017,ac-3qil6d5-shard-00-01.xmughkp.mongodb.net:27017,ac-3qil6d5-shard-00-02.xmughkp.mongodb.net:27017/?replicaSet=atlas-smqsut-shard-0&ssl=true&authSource=admin ", 
+	"mongodb+srv://hasmininanthan:Sabrena11@cluster0.etswca6.mongodb.net/ ", 
 	{ useNewUrlParser: true },
 ).catch(err => {
 	console.error(err.stack)
@@ -25,100 +19,72 @@ MongoClient.connect(
 	Inmate.injectDB(client);
 	Visitorlog.injectDB(client);
 })
-// async function run() {
-//   try {
-//     // Connect the client to the server	(optional starting in v4.7)
-//     await client.connect();
-//     // Send a ping to confirm a successful connection
-//     await client.db("ISSASSIGNMENT").command({ ping: 1 });
-//     console.log("Pinged your deployment. You successfully connected to MongoDB!");
-//   } finally {
-//     // Ensures that the client will close when you finish/error
-//     //await client.close();
-//   }
-// }
-// run().catch(console.dir);
-// let db;
-// let Visitorregistration;
-// let adminuser;
+
+const express = require('express')
+const app = express()
+const port = process.env.PORT || 3030
+
+const jwt = require ('jsonwebtoken');
+function generateAccessToken(payload){
+	return jwt.sign(payload, "secretcode", { expiresIn: '7d' });
+}
+
+function verifyToken(req, res, next) {
+	const authHeader = req.headers['authorization']
+	const token = authHeader && authHeader.split(' ')[1]
+
+	if (token == null) return res.sendStatus(401)
+
+	jwt.verify(token, "secretcode", (err, user) => {
+		console.log(err);
+
+		if (err) return res.sendStatus(403)
+
+		req.user = user
+
+		next()
+	})
+}
 
 app.use(express.json())
 app.use(express.urlencoded({ extended: false }))
 
 
-const swaggerJsdoc = require('swagger-jsdoc');
 const swaggerUi = require('swagger-ui-express');
-
-// Swagger set up
-const swaggerOptions = {
-  definition: {
-    openapi: '3.0.0',
-    info: {
-      title: 'Prison Management API',
-      version: '1.0.0',
-      description: 'This is a simple CRUD API application made with Express and documented with Swagger',
-    },
-    servers: [
-      {
-        url: `http://localhost:${port}`,
-      },
-    ],
-    components: {
-      securitySchemes: {
-        jwt:{
+const swaggerJsdoc = require('swagger-jsdoc');
+const options = {
+	definition: {
+		openapi: '3.0.0',
+		info: {
+			title: 'Prison Visitor Management System Sabash group',
+			version: '1.0.0',
+		},
+		components:{
+			securitySchemes:{
+				jwt:{
 					type: 'http',
 					scheme: 'bearer',
 					in: "header",
 					bearerFormat: 'JWT'
-        },
-      },
-    },
+				}
+			},
 		security:[{
 			"jwt": []
-  }]
-},
-  apis: ['./main.js'], // path to your API routes
-
+		}]
+		}
+	},
+	apis: ['./main.js'], 
 };
-
-const swaggerSpec = swaggerJsdoc(swaggerOptions);
-app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec))
-
-
-//middleware
-const verifyToken = (req, res, next) => {
-    const authHeader = req.headers.authorization;
-    if (authHeader && authHeader.startsWith('Bearer ')) {
-      const token = authHeader.substring(7, authHeader.length); // "Bearer " is 7 characters
-      //... (rest of your verification logic)
-    } else {
-      return res.status(403).json({ error: 'No token provided' });
-    }
-  
-    const token = authHeader.split(' ')[1]; // Expecting "Bearer TOKEN_STRING"
-    try {
-      const decoded = jwt.verify(token, secret);
-      req.user = decoded;
-    } catch (error) {
-      return res.status(401).json({ error: 'Failed to authenticate token' });
-    }
-  
-    next();
-  };
-  
-  
-//   // Secret key for JWT signing and encryption
-//   const secret = 'your-secret-key'; // Store this securely
-  
-//   app.use(bodyParser.json());
-
-
+const swaggerSpec = swaggerJsdoc(options);
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
 /**
  * @swagger
  * /login/user:
  *   post:
  *     description: User Login
+ *     tags:
+ *     - Authentication
  *     requestBody:
  *       required: true
  *       content:
@@ -136,29 +102,16 @@ const verifyToken = (req, res, next) => {
  *       401:
  *         description: Invalid username or password
  */
-    // Function to generate an access token
-const generateAccessToken = (payload) => {
-    // The payload can be any data you want to include in the token
-    return jwt.sign(payload, secret, { expiresIn: '1h' }); // Adjust the expiration as needed
-  };
 
 app.post('/login/user', async (req, res) => {
-    // const user = db.collection('user');
-//   const { username, password } = req.body;
-
 	console.log(req.body);
 
-    let user = await User.findOne({ username, password });
+	let user = await User.login(req.body.username, req.body.password);
 	
-	if (!user || user.password !== password){
+	if (user.status == ("invalid username" || "invalid password")) {
 		res.status(401).send("invalid username or password");
-		return;
+		return
 	}
-
-
-
-    // Create token if the user was found
-  const token = generateAccessToken({ userId: user._id });
 
 
 	res.status(200).json({
@@ -167,46 +120,63 @@ app.post('/login/user', async (req, res) => {
 		officerno: user.officerno,
 		rank: user.Rank,
 		phone: user.Phone,
-        message: 'Admin authenticated successfully',
-		token: token
+		token: generateAccessToken({ rank: user.Rank })
 
 	});
-
-   
 })
 
+/**
+ * @swagger
+ * /login/visitor:
+ *   post:
+ *     description: Visitor Login
+ *     tags:
+ *     - Authentication
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema: 
+ *             type: object
+ *             properties:
+ *               username: 
+ *                 type: string
+ *               password: 
+ *                 type: string
+ *     responses:
+ *       200:
+ *         description: Successful login
+ *       401:
+ *         description: Invalid username or password
+ */
 
-// // Connect to MongoDB and initialize collections
-// client.connect()
-//   .then(() => {
-//     console.log('Connected to MongoDB');
-//     db = client.db('ISSASSIGNMENT');
-    
+app.post('/login/visitor', async (req, res) => {
+	console.log(req.body);
 
-//   // Initialize collections after establishing the connection
-//   Visitorregistration = db.collection('visitor');
-//   adminuser = db.collection('user');
+	let user = await Visitor.login(req.body.username, req.body.password);
 
+	if (user.status == ("invalid username" || "invalid password")) {
+		res.status(401).send("invalid username or password");
+		return
+	}
 
-//   // Now you can safely start your server here, after the DB connection is established
-//   app.listen(port, () => {
-//     console.log(`Server is running on http://localhost:${port}`);
-//   });
-// });
-
-
-// In-memory data storage (replace with a database in production)
-const visitor = [];
-const user = [];
-
-app.use(express.json());
-
+	res.status(200).json({
+		username: user.username,
+		name: user.Name,
+		age: user.Age,
+		gender: user.Gender,
+		relation: user.Relation,
+		token: generateAccessToken({ username: user.username })
+	});
+})
 
 /**
  * @swagger
  * /register/user:
  *   post:
  *     description: User Registration
+ *     tags:
+ *     - Registration
  *     requestBody:
  *       required: true
  *       content:
@@ -234,30 +204,21 @@ app.use(express.json());
  */
 
 app.post('/register/user', async (req, res) => {
-    const user = db.collection('user');
-    const { username, password, name, officerno, rank, phone } = req.body;
-
 	console.log(req.body);
 	
-    const existingUser = await user.findOne({ username });
-    if (existingUser) {
-      return res.status(400).json({ error: 'User already exists' });
-    }
-  
-    await user.insertOne({ username, password, name, officerno, rank, phone });
-    res.status(201).json({ message: 'User registered successfully' });
-  });
+	const reg = await User.register(req.body.username, req.body.password, req.body.name, req.body.officerno, req.body.rank, req.body.phone);
+	console.log(reg);
 
-  
+	res.json({reg})
+})
+
 /**
  * @swagger
- * /registervisitor:
+ * /register/visitor:
  *   post:
- *     description: Register a new visitor
- *     tags: 
- *      - visitor
- *     security:   
- *      - jwt: []
+ *     description: Visitor Registration
+ *     tags:
+ *     - Registration
  *     requestBody:
  *       required: true
  *       content:
@@ -269,185 +230,471 @@ app.post('/register/user', async (req, res) => {
  *                 type: string
  *               password: 
  *                 type: string
- *               Name: 
+ *               name: 
  *                 type: string
- *               Age:
+ *               age:
+ *                 type: integer
+ *               gender:
  *                 type: string
- *               Gender:
+ *               relation:
  *                 type: string
- *               Address:
+ *               telno:
  *                 type: string
- *               Zipcode:
- *                 type: string
- *               Relation:
- *                 type: string
- *     responses:
- *       201:
- *         description: Visitor registered successfully
- *       500:
- *         description: Error occurred while registering the visitor
- */
-
-
-// Protected route for registering a visitor - token required
-app.post('/register/visitor',verifyToken, async (req, res) => {
-    try {
-    //   const visitor = db.collection('visitor');
-     
-
-       // Check if the user is authenticated (you might want to use middleware for this)
-    if (!req.user) {
-        return res.status(401).json({ error: 'Unauthorized' });
-      }
-
-       const { username, password, Name, Age, Gender, Address, Zipcode, Relation } = req.body;
-      await Visitor.register({ username, password, Name, Age, Gender, Address, Zipcode, Relation });
-
-      res.status(201).json({ message: 'Visitor registered successfully' });
-    } catch (error) {
-      res.status(500).json({ error: 'An error occurred while registering the visitor' });
-    }
-  });
-
-  /**
- * @swagger
- * /viewvisitor:
- *    get:
- *     description: View all visitors
- *     tags: 
- *      - visitor
- *     security:   
- *      - jwt: []
  *     responses:
  *       200:
- *         description: List of all visitors
- *         content:
- *           application/json:
- *             schema:
- *               type: array
- *               items:
- *                 $ref: '#/components/schemas/visitor'
- *       500:
- *         description: Error occurred while fetching visitors
+ *         description: Successful registered
+ *       401:
+ *         description: There is an error during registration , Please try again
  */
 
+app.post('/register/visitor', async (req, res) => {
+	console.log(req.body);
 
-// Protected route for viewing visitors - token required
-app.get('/viewvisitor', verifyToken, async (req, res) => {
-    try {
-      const visitor = db.collection('visitor');
-      const results = await visitor.find().toArray();
-  
-      res.json(results);
-    } catch (error) {
-      res.status(500).json({ error: 'An error occurred while fetching visitors' });
-    }
-  });
+		const reg = await Visitor.register(req.body.username, req.body.password, req.body.name, req.body.age, req.body.gender, req.body.relation, req.body.telno);
+		console.log(reg);
+	
+	res.json({reg})
+})
 
-  
+app.use(verifyToken);
+
 /**
  * @swagger
- * /visitorpass:
+ * /register/Visitorlog:
  *   post:
- *     description: Create visitor passes
- *     tags: 
- *      - visitor
- *     security:   
+ *     security:
  *      - jwt: []
+ *     description: Create Visitorlog
+ *     tags:
+ *     - Registration
  *     requestBody:
  *       required: true
  *       content:
  *         application/json:
- *           schema:
+ *           schema: 
  *             type: object
- *             required:
- *               - visitorId
- *               - issuedBy
- *               - validUntil
  *             properties:
- *               visitorId:
+ *               logno:
+ *                 type: integer
+ *               username: 
  *                 type: string
- *               issuedBy:
+ *               inmateno: 
  *                 type: string
- *               validUntil:
+ *               dateofvisit:
  *                 type: string
- *                 format: date
- *     responses:
- *       201:
- *         description: Visitor pass issued successfully
- *       500:
- *         description: Error occurred while issuing the pass
- */
+ *               timein:
+ *                 type: string
+ *               timeout:
+ *                 type: string
+ *               purpose:
+ *                 type: string
+ *               officerno:
+ *                 type: string
 
-
-// Admin issue visitor pass
-// Admin Issue Visitor Pass
-app.post('/visitorpass', verifyToken, async (req, res) => {
-    const { visitorId, issuedBy, validUntil } = req.body;
-  
-    try {
-      const visitorpass = db.collection('visitorpass');
-  
-      const newPass = {
-        visitorId,
-        issuedBy,
-        validUntil,
-        issuedAt: new Date(),
-      };
-  
-      await visitorpass.insertOne(newPass);
-      res.status(201).json({ message: 'Visitor pass issued successfully' });
-    } catch (error) {
-      console.error('Issue Pass Error:', error.message);
-      res.status(500).json({ error: 'An error occurred while issuing the pass', details: error.message });
-    }
-  });
-  
-  
-/**
- * @swagger
- * /retrievepass/{visitorId}:
- *    get:
- *     description: Retrieve visitor passes
- *     tags: 
- *      - pass
- *     security:   
- *      - jwt: []
- *     parameters:
- *       - in: path
- *         name: visitorId
- *         required: true
- *         schema:
- *           type: string
- *         description: The visitor ID
  *     responses:
  *       200:
- *         description: Visitor pass details
- *       404:
- *         description: No pass found for this visitor
- *       500:
- *         description: Error occurred while retrieving the pass
+ *         description: Successful registered
+ *       401:
+ *         description: There is an error during registration , Please try again
  */
 
 
-//Visitor to Retrieve Their Pass
-// Visitor Retrieve Pass
-app.get('/retrievepass/:visitorId', async (req, res) => {
-    const visitorId = req.params.visitorId;
-  
-    try {
-      const visitorpass = db.collection('visitorpass');
-      const pass = await visitorpass.findOne({ visitorId });
-  
-      if (!pass) {
-        return res.status(404).json({ error: 'No pass found for this visitor' });
-      }
-  
-      res.json(pass);
-    } catch (error) {
-      console.error('Retrieve Pass Error:', error.message);
-      res.status(500).json({ error: 'An error occurred while retrieving the pass', details: error.message });
-    }
-  });
-  
-  
+ app.post('/register/visitorlog', async (req, res) => {
+	console.log(req.body);
+
+	if (req.user.rank == "officer" || "security"){
+		const reg = await Visitorlog.register(req.body.logno, req.body.username, req.body.inmateno, req.body.dateofvisit, req.body.timein, req.body.timeout, req.body.purpose, req.body.officerno);
+		res.status(200).send(reg)
+	}
+	else{
+		res.status(403).send("You are unauthorized")
+	}
+})
+
+/**
+ * @swagger
+ * /register/inmate:
+ *   post:
+ *     security:
+ *      - jwt: []
+ *     description: Inmate Registration
+ *     tags:
+ *     - Registration 
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema: 
+ *             type: object
+ *             properties:
+ *               inmateno: 
+ *                 type: string
+ *               firstname: 
+ *                 type: string
+ *               lastname: 
+ *                 type: string
+ *               age:
+ *                 type: integer
+ *               gender:
+ *                 type: string
+ *               guilty:
+ *                 type: string
+ *              
+ *     responses:
+ *       200:
+ *         description: Successful registered
+ *       401:
+ *         description: There is an error during registration , Please try again
+ */
+
+ app.post('/register/inmate', async (req,res)=>{
+	console.log(req.body)
+
+	if (req.user.rank == "officer"){
+		const reg = await Inmate.register(req.body.inmateno, req.body.firstname, req.body.lastname, req.body.age, req.body.gender, req.body.guilty );
+		res.status(200).send(reg)
+	}
+	else{
+		res.status(403).send("You are unauthorized")
+	}
+
+})
+
+/**
+ * @swagger
+ * /user/update:
+ *   patch:
+ *     security:
+ *      - jwt: []
+ *     description: User Update
+ *     tags:
+ *     - Modification
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema: 
+ *             type: object
+ *             properties:
+ *               username: 
+ *                 type: string
+ *               name: 
+ *                 type: string
+ *               officerno:
+ *                 type: string
+ *               rank:
+ *                 type: string
+ *               phone:
+ *                 type: string
+ *     responses:
+ *       200:
+ *         description: Successful updated
+ *       401:
+ *         description: There is an error during updating , Please try again
+ */
+
+app.patch('/user/update', async (req, res) => {
+	console.log(req.body);
+
+	if (req.user.rank == "officer"){
+		const update = await User.update(req.body.username, req.body.name, req.body.officerno, req.body.rank, req.body.phone);
+		res.status(200).send(update)
+	}
+	else{
+		res.status(403).send("You are unauthorized")
+	}
+
+})
+
+/**
+ * @swagger
+ * /visitor/update:
+ *   patch:
+ *     security:
+ *      - jwt: []
+ *     description: Visitor Update
+ *     tags:
+ *     - Modification
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema: 
+ *             type: object
+ *             properties:
+ *               username: 
+ *                 type: string
+ *               password: 
+ *                 type: string
+ *               name: 
+ *                 type: string
+ *               age:
+ *                 type: integer
+ *               gender:
+ *                 type: string
+ *               relation:
+ *                 type: string
+ *               telno:
+ *                 type: string
+ *     responses:
+ *       200:
+ *         description: Successful updated
+ *       401:
+ *         description: There is an error during updating , Please try again
+ */
+
+app.patch('/visitor/update', async (req, res) => {
+	console.log(req.body);
+
+	if (req.user.rank == "officer"){
+		const update = await Visitor.update(req.body.username, req.body.name, req.body.age, req.body.gender, req.body.relation, req.body.telno);
+		res.status(200).send(update)
+	}
+	else{
+		res.status(403).send("You are unauthorized")
+	}
+})
+
+/**
+ * @swagger
+ * /inmate/update:
+ *   patch:
+ *     security:
+ *      - jwt: []
+ *     description: Inmate Update
+ *     tags:
+ *     - Modification
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema: 
+ *             type: object
+ *             properties:
+ *               inmateno: 
+ *                 type: string
+ *               firstname: 
+ *                 type: string
+ *               lastname: 
+ *                 type: string
+ *               age:
+ *                 type: integer
+ *               gender:
+ *                 type: string
+ *               guilty:
+ *                 type: string
+ *     responses:
+ *       200:
+ *         description: Successful updated
+ *       401:
+ *         description: There is an error during updating , Please try again
+ */
+
+ app.patch('/inmate/update', async (req, res) => {
+	console.log(req.body);
+	if (req.user.rank == "officer"){
+		const update = await Inmate.update( req.body.inmateno, req.body.firstname, req.body.lastname, req.body.age, req.body.gender, req.body.guilty);
+		res.status(200).send(update)
+	}
+	else{
+		res.status(403).send("You are unauthorized")
+	}
+})
+
+/**
+ * @swagger
+ * /visitorlog/update:
+ *   patch:
+ *     security:
+ *      - jwt: []
+ *     description: Visitorlog Update
+ *     tags:
+ *     - Modification
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema: 
+ *             type: object
+ *             properties:
+ *               logno:
+ *                 type: integer
+ *               inmateno: 
+ *                 type: string
+ *               dateofvisit:
+ *                 type: string
+ *               timein:
+ *                 type: string
+ *               timeout:
+ *                 type: string
+ *               purpose:
+ *                 type: string
+ *               officerno:
+ *                 type: string
+
+ *     responses:
+ *       200:
+ *         description: Successful updated
+ *       401:
+ *         description: There is an error during updating , Please try again
+ */
+
+ app.patch('/visitorlog/update', async (req, res) => {
+	console.log(req.body);
+
+	if (req.user.username == req.body.username){
+		const update = await Visitorlog.update(req.body.logno, req.body.inmateno, req.body.dateofvisit, req.body.timein, req.body.timeout, req.body.purpose, req.body.officerno);
+		res.status(200).send(update)
+	}
+	else{
+		res.status(403).send("You are unauthorized")
+	}
+})
+
+/**
+ * @swagger
+ * /delete/user:
+ *   delete:
+ *     security:
+ *      - jwt: []
+ *     description: Delete User
+ *     tags:
+ *     - Remove(delete)
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema: 
+ *             type: object
+ *             properties:
+ *               username: 
+ *                 type: string
+ *               
+ *     responses:
+ *       200:
+ *         description: Successful delete
+ *       401:
+ *         description: There is an error during deleting , Please try again
+ */
+
+app.delete('/delete/user', async (req, res) => {
+	if (req.user.rank == "officer"){
+		const del = await User.delete(req.body.username)
+		res.status(200).send(del)
+	}
+	else{
+		res.status(403).send("You are unauthorized")
+	}
+})
+
+/**
+ * @swagger
+ * /delete/visitor:
+ *   delete:
+ *     security:
+ *      - jwt: []
+ *     description: Delete Visitor
+ *     tags:
+ *     - Remove(delete)
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema: 
+ *             type: object
+ *             properties:
+ *               username: 
+ *                 type: string
+ *               
+ *     responses:
+ *       200:
+ *         description: Successful deleted
+ *       401:
+ *         description: There is an error during deleting , Please try again
+ */
+
+app.delete('/delete/visitor', async (req, res) => {
+	if (req.user.rank == "officer"){
+		const del = await Visitor.delete(req.body.username)
+		res.status(200).send(del)
+	}
+	else{
+		res.status(403).send("You are unauthorized")
+	}
+})
+
+/**
+ * @swagger
+ * /delete/Inmate:
+ *   delete:
+ *     security:
+ *      - jwt: []
+ *     description: Delete Inmate
+ *     tags:
+ *     - Remove(delete)
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema: 
+ *             type: object
+ *             properties:
+ *               inmateno: 
+ *                 type: string
+ *               
+ *     responses:
+ *       200:
+ *         description: Successful deleted
+ *       401:
+ *         description: There is an error during deleting , Please try again
+ */
+
+ app.delete('/delete/inmate', async (req, res) => {
+	if (req.user.rank == "officer"){
+		const del = await Inmate.delete(req.body.inmateno)
+		res.status(200).send(del)
+	}
+	else{
+		res.status(403).send("You are unauthorized")
+	}
+})
+
+/**
+ * @swagger
+ * /delete/visitorlog:
+ *   delete:
+ *     security:
+ *      - jwt: []
+ *     description: Delete Visitorlog
+ *     tags:
+ *     - Remove(delete)
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema: 
+ *             type: object
+ *             properties:
+ *               logno: 
+ *                 type: integer
+ *               
+ *     responses:
+ *       200:
+ *         description: Successful delete
+ *       401:
+ *         description: There is an error during deleting , Please try again
+ */
+
+ app.delete('/delete/visitorlog', async (req, res) => {
+	if (req.user.rank == "officer" || "security"){
+		const del = await Visitorlog.delete(req.body.logno)
+		res.status(200).send(del)
+	}
+	else{
+		res.status(403).send("You are unauthorized")
+	}
+})
+
+// app.listen(port, () => {
+// 	console.log(Example app listening at http://localhost:${port})
+// });
