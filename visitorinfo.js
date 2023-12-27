@@ -51,4 +51,4 @@ class VisitorInfo {
 	}
 
 
-module.exports = Visitorlog;
+module.exports = VisitorInfo;
