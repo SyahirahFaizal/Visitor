@@ -1,11 +1,49 @@
 const express = require('express')
 const app = express()
-const port = 3000
+const port = process.env.PORT || 3000
+
 const { MongoClient, ServerApiVersion } = require('mongodb');
 const jwt = require('jsonwebtoken');
 const bodyParser = require('body-parser');
-const { ObjectId } = require('mongodb'); // Import ObjectId
+const User = require("./user");
+const Visitor = require("./visitor.js");
+const Inmate = require("./inmate");
+const Visitorlog = require("./visitorlog")
 
+
+MongoClient.connect(
+	// TODO: Connection 
+	"mongodb://anitagobinathan19:anita1923@ac-3qil6d5-shard-00-00.xmughkp.mongodb.net:27017,ac-3qil6d5-shard-00-01.xmughkp.mongodb.net:27017,ac-3qil6d5-shard-00-02.xmughkp.mongodb.net:27017/?replicaSet=atlas-smqsut-shard-0&ssl=true&authSource=admin ", 
+	{ useNewUrlParser: true },
+).catch(err => {
+	console.error(err.stack)
+	process.exit(1)
+}).then(async client => {
+	console.log('Connected to MongoDB');
+	User.injectDB(client);
+	Visitor.injectDB(client);
+	Inmate.injectDB(client);
+	Visitorlog.injectDB(client);
+})
+// async function run() {
+//   try {
+//     // Connect the client to the server	(optional starting in v4.7)
+//     await client.connect();
+//     // Send a ping to confirm a successful connection
+//     await client.db("ISSASSIGNMENT").command({ ping: 1 });
+//     console.log("Pinged your deployment. You successfully connected to MongoDB!");
+//   } finally {
+//     // Ensures that the client will close when you finish/error
+//     //await client.close();
+//   }
+// }
+// run().catch(console.dir);
+// let db;
+// let Visitorregistration;
+// let adminuser;
+
+app.use(express.json())
+app.use(express.urlencoded({ extended: false }))
 
 
 const swaggerJsdoc = require('swagger-jsdoc');
@@ -69,10 +107,10 @@ const verifyToken = (req, res, next) => {
   };
   
   
-  // Secret key for JWT signing and encryption
-  const secret = 'your-secret-key'; // Store this securely
+//   // Secret key for JWT signing and encryption
+//   const secret = 'your-secret-key'; // Store this securely
   
-  app.use(bodyParser.json());
+//   app.use(bodyParser.json());
 
 
 
@@ -105,14 +143,14 @@ const generateAccessToken = (payload) => {
   };
 
 app.post('/login/user', async (req, res) => {
-    const user = db.collection('user');
-  const { username, password } = req.body;
+    // const user = db.collection('user');
+//   const { username, password } = req.body;
 
 	console.log(req.body);
 
-    const users = await user.findOne({ username, password });
+    let user = await User.findOne({ username, password });
 	
-	if (!users || users.password !== password){
+	if (!user || user.password !== password){
 		res.status(401).send("invalid username or password");
 		return;
 	}
@@ -136,51 +174,25 @@ app.post('/login/user', async (req, res) => {
 
    
 })
-const uri = "mongodb://anitagobinathan19:anita1923@ac-3qil6d5-shard-00-00.xmughkp.mongodb.net:27017,ac-3qil6d5-shard-00-01.xmughkp.mongodb.net:27017,ac-3qil6d5-shard-00-02.xmughkp.mongodb.net:27017/?replicaSet=atlas-smqsut-shard-0&ssl=true&authSource=admin";
-// Create a MongoClient with a MongoClientOptions object to set the Stable API version
-const client = new MongoClient(uri, {
-  serverApi: {
-    version: ServerApiVersion.v1,
-    strict: true,
-    deprecationErrors: true,
-  }
-});
-async function run() {
-  try {
-    // Connect the client to the server	(optional starting in v4.7)
-    await client.connect();
-    // Send a ping to confirm a successful connection
-    await client.db("ISSASSIGNMENT").command({ ping: 1 });
-    console.log("Pinged your deployment. You successfully connected to MongoDB!");
-  } finally {
-    // Ensures that the client will close when you finish/error
-    //await client.close();
-  }
-}
-run().catch(console.dir);
-let db;
-let Visitorregistration;
-let adminuser;
 
 
-
-// Connect to MongoDB and initialize collections
-client.connect()
-  .then(() => {
-    console.log('Connected to MongoDB');
-    db = client.db('ISSASSIGNMENT');
+// // Connect to MongoDB and initialize collections
+// client.connect()
+//   .then(() => {
+//     console.log('Connected to MongoDB');
+//     db = client.db('ISSASSIGNMENT');
     
 
-  // Initialize collections after establishing the connection
-  Visitorregistration = db.collection('visitor');
-  adminuser = db.collection('user');
+//   // Initialize collections after establishing the connection
+//   Visitorregistration = db.collection('visitor');
+//   adminuser = db.collection('user');
 
 
-  // Now you can safely start your server here, after the DB connection is established
-  app.listen(port, () => {
-    console.log(`Server is running on http://localhost:${port}`);
-  });
-});
+//   // Now you can safely start your server here, after the DB connection is established
+//   app.listen(port, () => {
+//     console.log(`Server is running on http://localhost:${port}`);
+//   });
+// });
 
 
 // In-memory data storage (replace with a database in production)
@@ -278,9 +290,9 @@ app.post('/register/user', async (req, res) => {
 
 
 // Protected route for registering a visitor - token required
-app.post('/registervisitor',verifyToken, async (req, res) => {
+app.post('/register/visitor',verifyToken, async (req, res) => {
     try {
-      const visitor = db.collection('visitor');
+    //   const visitor = db.collection('visitor');
      
 
        // Check if the user is authenticated (you might want to use middleware for this)
@@ -289,7 +301,7 @@ app.post('/registervisitor',verifyToken, async (req, res) => {
       }
 
        const { username, password, Name, Age, Gender, Address, Zipcode, Relation } = req.body;
-      await visitor.insertOne({ username, password, Name, Age, Gender, Address, Zipcode, Relation });
+      await Visitor.register({ username, password, Name, Age, Gender, Address, Zipcode, Relation });
 
       res.status(201).json({ message: 'Visitor registered successfully' });
     } catch (error) {
