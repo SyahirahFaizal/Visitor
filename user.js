@@ -98,7 +98,7 @@ class UserManager {
 	if (!userToUpdate) {
 		return { status: "User not found" };
 	  }
-	  
+
 	await users.updateOne(
       { username: username },
       {
@@ -113,13 +113,14 @@ class UserManager {
     return { status: "Information updated" };
   }
 
-  if (result.deletedCount === 0) {
-	return { status: "User not found" };
-  }
-
   static async delete(username) {
-    await users.deleteOne({ username: username });
-    return { status: "User deleted!" };
+	const result = await users.deleteOne({ username: username });
+  
+	if (result.deletedCount === 0) {
+	  return { status: "User not found" };
+	}
+  
+	return { status: "User deleted!" };
   }
 }
 
