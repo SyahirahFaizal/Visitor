@@ -706,7 +706,7 @@ app.delete('/delete/visitor', async (req, res) => {
  *     tags: 
  *       - Visitor
  *     security:
- *       - bearerAuth: []
+ *       - jwt: []
  *     responses:
  *       200:
  *         description: List of all visitors
