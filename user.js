@@ -90,7 +90,7 @@ class UserManager {
 
       await user.save();
 
-      return { status: "success", user };
+      return { status: "success", user: userModel };
     } catch (error) {
       console.error(error);
       return { status: "error" };
