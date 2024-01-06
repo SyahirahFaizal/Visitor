@@ -1,4 +1,4 @@
-### PUBLIC API ###
+### PUBLIC API TO CREATE USER###
 POST http://localhost:3000/register/user
 Content-Type: application/json
 
@@ -11,12 +11,38 @@ Content-Type: application/json
   "phone": "1234567890"
 }
 
-### PUBLIC API ###
+### PUBLIC API TO LOGIN USER ###
 POST http://localhost:3000/login/user
 Content-Type: application/json
 
 {
   "username": "syahirah",
   "password": "syahirah12345"
+}
+
+##### PUBLIC API TO VIEW VISITOR####
+GET http://localhost:3000/viewvisitor
+Content-Type: application/json
+Authorization: Bearer $2b$10$zYmKW48fDeIkQz4IbvP6qON3cEVG1tCqRsYL451jGWAMOxoj8H6nC
+{
+    
+}
+
+## PUBLIC API TO ISSUE PASS ##
+
+GET http://localhost:3000/issuevisitorpass
+Content-Type: application/json
+Authorization: Bearer $2b$10$zYmKW48fDeIkQz4IbvP6qON3cEVG1tCqRsYL451jGWAMOxoj8H6nC
+{
+    
+}
+
+## PUBLIC API TO RETRIEVE PASS##
+
+GET http://localhost:3000/retrievevisitorpass
+Content-Type: application/json
+Authorization: Bearer $2b$10$zYmKW48fDeIkQz4IbvP6qON3cEVG1tCqRsYL451jGWAMOxoj8H6nC
+{
+    
 }
 
