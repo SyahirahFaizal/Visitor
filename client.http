@@ -1,5 +1,5 @@
 ### PUBLIC API TO CREATE USER###
-POST http://localhost:3000/register/user
+POST https://visitorwebappis.azurewebsites.net/register/user
 Content-Type: application/json
 
 {
@@ -12,7 +12,7 @@ Content-Type: application/json
 }
 
 ### PUBLIC API TO LOGIN USER ###
-POST http://localhost:3000/login/user
+POST https://visitorwebappis.azurewebsites.net/login/user
 Content-Type: application/json
 
 {
@@ -21,7 +21,7 @@ Content-Type: application/json
 }
 
 ##### PUBLIC API TO VIEW VISITOR####
-GET http://localhost:3000/viewvisitor
+GET https://visitorwebappis.azurewebsites.net/viewvisitor
 Content-Type: application/json
 Authorization: Bearer $2b$10$zYmKW48fDeIkQz4IbvP6qON3cEVG1tCqRsYL451jGWAMOxoj8H6nC
 {
@@ -30,7 +30,7 @@ Authorization: Bearer $2b$10$zYmKW48fDeIkQz4IbvP6qON3cEVG1tCqRsYL451jGWAMOxoj8H6
 
 ## PUBLIC API TO ISSUE PASS ##
 
-GET http://localhost:3000/issuevisitorpass
+GET https://visitorwebappis.azurewebsites.net/issuevisitorpass
 Content-Type: application/json
 Authorization: Bearer $2b$10$zYmKW48fDeIkQz4IbvP6qON3cEVG1tCqRsYL451jGWAMOxoj8H6nC
 {
@@ -39,7 +39,7 @@ Authorization: Bearer $2b$10$zYmKW48fDeIkQz4IbvP6qON3cEVG1tCqRsYL451jGWAMOxoj8H6
 
 ## PUBLIC API TO RETRIEVE PASS##
 
-GET http://localhost:3000/retrievevisitorpass
+GET https://visitorwebappis.azurewebsites.net/retrievevisitorpass
 Content-Type: application/json
 Authorization: Bearer $2b$10$zYmKW48fDeIkQz4IbvP6qON3cEVG1tCqRsYL451jGWAMOxoj8H6nC
 {
