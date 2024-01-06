@@ -3,7 +3,7 @@ let visitors;
 // 
 class Visitor {
 	static async injectDB(conn) {
-		visitors = await conn.db("ISSASSIGNMENT").collection("visitors")
+		visitors = await conn.db("VISITOR").collection("visitor")
 	}
 
 	/**
