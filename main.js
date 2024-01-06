@@ -9,7 +9,7 @@ const {checkAccountLockout} = require("./middleware");
 MongoClient.connect(
 	// TODO: Connection 
 	"mongodb://syahirahmfaizal:241018atz@ac-zp8a4we-shard-00-00.szywh0c.mongodb.net:27017,ac-zp8a4we-shard-00-01.szywh0c.mongodb.net:27017,ac-zp8a4we-shard-00-02.szywh0c.mongodb.net:27017/?replicaSet=atlas-i0x38w-shard-0&ssl=true&authSource=admin", 
-	{ useUnifiedTopology: true },
+	
 ).catch(err => {
 	console.error(err.stack)
 	process.exit(1)
