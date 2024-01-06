@@ -703,10 +703,8 @@ app.delete('/delete/visitor', async (req, res) => {
  * /viewvisitor:
  *   get:
  *     summary: View all visitors
- *     tags: [Visitor]
- * - Authentication
- *     requestBody:
- *       required: true
+ *     tags: 
+ *       - Visitor
  *     security:
  *       - bearerAuth: []
  *     responses:
