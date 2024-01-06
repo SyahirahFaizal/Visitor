@@ -76,13 +76,16 @@ class UserManager {
       if (!isValidPassword) {
         user.failedLoginAttempts += 1;
 
-        if (user.failedLoginAttempts >= MAX_FAILED_LOGIN_ATTEMPTS) {
-          user.lockoutUntil = new Date(Date.now() + LOCKOUT_DURATION);
-        }
+		if (user.failedLoginAttempts >= MAX_FAILED_LOGIN_ATTEMPTS) {
+			// Set the lockout duration to one month later
+			const oneMonthLater = new Date();
+			oneMonthLater.setMonth(oneMonthLater.getMonth() + 1);
 
-        await user.save();
+			user.lockoutUntil = oneMonthLater;
+		}
+		await user.save();
 
-        return { status: "invalid password" };
+            return { status: "invalid password" };
       }
 
       user.failedLoginAttempts = 0;
