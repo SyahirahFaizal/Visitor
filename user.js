@@ -67,7 +67,11 @@ class UserManager {
         return { status: "invalid username" };
       }
 
-      const isValidPassword = await user.comparePassword(password);
+	  // Create an instance of the User model
+	  const userModel = new User(user);
+
+
+      const isValidPassword = await userModel.comparePassword(password);
 
       if (!isValidPassword) {
         user.failedLoginAttempts += 1;
