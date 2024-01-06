@@ -1,4 +1,17 @@
 const bcrypt = require("bcrypt")
+const mongoose = require("mongoose");
+
+const userSchema = new mongoose.Schema({
+
+	failedLoginAttempts: {
+		type: Number,
+		default: 0,
+	  },
+	  lockoutUntil: {
+		type: Date,
+	  },
+});
+
 let users;
 // /
 class User {
@@ -39,21 +52,56 @@ class User {
 	}
 
 	static async login(username, password) {
-			// TODO: Check if username exists
-			const result = await users.findOne({username: username});
+			// // TODO: Check if username exists
+			// const result = await users.findOne({username: username});
 
-				if (!result) {
-					return { status: "invalid username" }
-				}
+			// 	if (!result) {
+			// 		return { status: "invalid username" }
+			// 	}
 
-			// TODO: Validate password
-				const com = await bcrypt.compare(password, result.HashedPassword)
-				if (!com){
-					return { status: "invalid password"}
-				}
-			// TODO: Return user object
-				return result;
+			// // TODO: Validate password
+			// 	const com = await bcrypt.compare(password, result.HashedPassword)
+			// 	if (!com){
+			// 		return { status: "invalid password"}
+			// 	}
+			// // TODO: Return user object
+			// 	return result;
 				
+				try {
+					const user = await User.findOne({ username });
+				
+					if (!user) {
+					  return { status: "invalid username" };
+					}
+				
+					const isValidPassword = await user.comparePassword(password);
+				
+					if (!isValidPassword) {
+					  // Increment the failed login attempts
+					  user.failedLoginAttempts += 1;
+				
+					  // Check if the account should be locked
+					  if (user.failedLoginAttempts >= MAX_FAILED_LOGIN_ATTEMPTS) {
+						// Set lockoutUntil to the current time plus lockout duration
+						user.lockoutUntil = new Date(Date.now() + LOCKOUT_DURATION);
+					  }
+				
+					  await user.save();
+				
+					  return { status: "invalid password" };
+					}
+				
+					// If login is successful, reset the failed login attempts
+					user.failedLoginAttempts = 0;
+					user.lockoutUntil = null;
+				
+					await user.save();
+				
+					return { status: "success", user };
+				  } catch (error) {
+					console.error(error);
+					return { status: "error" };
+				  }
 	}
 	
 		static async update(username, name, officerno, rank, phone){
@@ -71,6 +119,6 @@ class User {
 		}
 
 	}
-
+const User = mongoose.model("User", userSchema);
 
 module.exports = User;

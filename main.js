@@ -3,6 +3,7 @@ const User = require("./user");
 const Visitor = require("./visitor.js");
 const Pet = require("./pet");
 const VisitorInfo = require("./visitorinfo")
+const {checkAccountLockout} = require("./middleware");
 
 
 MongoClient.connect(
@@ -103,7 +104,7 @@ app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
  *         description: Invalid username or password
  */
 
-app.post('/login/user', async (req, res) => {
+app.post('/login/user', checkAccountLockout, async (req, res) => {
 	console.log(req.body);
 
 	let user = await User.login(req.body.username, req.body.password);
@@ -696,6 +697,8 @@ app.delete('/delete/visitor', async (req, res) => {
 		res.status(403).send("You are unauthorized")
 	}
 })
+
+
 
 app.listen(port, () => {
 	console.log(`Example app listening at http://localhost:${port}`)
