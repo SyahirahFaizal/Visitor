@@ -787,7 +787,7 @@ app.post('/issuevisitorpass', verifyToken, async (req, res) => {
 	const { visitorId, issuedBy, validUntil } = req.body;
   
 	try {
-	  const visitorPasses = db.collection('visitorpasses');
+	  const visitorPasses = db.collection('visitor');
   
 	  const newPass = {
 		visitorId,

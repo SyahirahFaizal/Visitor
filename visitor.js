@@ -75,7 +75,7 @@ class Visitor {
 
 	static async issuePass(username, issuedBy, validUntil) {
         try {
-            const visitorPasses = db.collection('visitorpasses');
+            const visitorPasses = db.collection('visitor');
 
             const newPass = {
                 visitorId: username, // Assuming 'username' is the visitorId
@@ -99,7 +99,7 @@ class Visitor {
 
 	static async retrievePass(username) {
         try {
-            const visitorPasses = db.collection('visitorpasses');
+            const visitorPasses = db.collection('visitor');
 
             // Retrieve the pass for the given visitor
             const pass = await visitorPasses.findOne({ visitorId: username });
