@@ -699,6 +699,41 @@ app.delete('/delete/visitor', async (req, res) => {
 })
 
 
+/**
+ * @swagger
+ * /viewvisitor:
+ *   get:
+ *     summary: View all visitors
+ *     tags: [Visitor]
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: List of all visitors
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 $ref: '#/components/schemas/Visitor'
+ *       500:
+ *         description: Error occurred while fetching visitors
+ */
+
+
+// Protected route for viewing visitors - token required
+app.get('/viewvisitor', verifyToken, async (req, res) => {
+	try {
+	  const visitors = db.collection('visitor');
+	  const results = await visitors.find().toArray();
+  
+	  res.json(results);
+	} catch (error) {
+	  res.status(500).json({ error: 'An error occurred while fetching visitors' });
+	}
+  });
+
+
 
 app.listen(port, () => {
 	console.log(`Example app listening at http://localhost:${port}`)
