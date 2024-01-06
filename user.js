@@ -34,7 +34,7 @@ let users;
 
 class UserManager {
   static async injectDB(conn) {
-    users = await conn.db("ISSASSIGNMENT").collection("users");
+    users = await conn.db("VISITOR").collection("users");
   }
 
   static async register(username, password, name, officerno, rank, phone) {
@@ -94,7 +94,12 @@ class UserManager {
   }
 
   static async update(username, name, officerno, rank, phone) {
-    await users.updateOne(
+    
+	if (!userToUpdate) {
+		return { status: "User not found" };
+	  }
+	  
+	await users.updateOne(
       { username: username },
       {
         $set: {
@@ -106,6 +111,10 @@ class UserManager {
       }
     );
     return { status: "Information updated" };
+  }
+
+  if (result.deletedCount === 0) {
+	return { status: "User not found" };
   }
 
   static async delete(username) {
