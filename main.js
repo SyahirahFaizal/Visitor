@@ -811,6 +811,8 @@ app.post('/issuevisitorpass', verifyToken, async (req, res) => {
  *   get:
  *     summary: Retrieve a visitor pass
  *     tags: [Pass]
+ *      security:
+ *       - jwt: []
  *     parameters:
  *       - in: path
  *         name: visitorId
