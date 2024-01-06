@@ -66,6 +66,10 @@ class UserManager {
       if (!user) {
         return { status: "invalid username" };
       }
+	  if (user.lockoutUntil && user.lockoutUntil > new Date()) {
+		// User is locked out
+		return { status: "locked out" };
+	  }
 
 	  // Create an instance of the User model
 	  const userModel = new User(user);

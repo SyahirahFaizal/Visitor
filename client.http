@@ -1,0 +1,12 @@
+### PUBLIC API ###
+POST http://localhost:3000/register/user
+Content-Type: application/json
+
+{
+  "username": "syahirah",
+  "password": "syahirah12345",
+  "name": "Syahirah",
+  "officerno": "123456",
+  "rank": "Captain",
+  "phone": "1234567890"
+}
