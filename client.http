@@ -10,3 +10,13 @@ Content-Type: application/json
   "rank": "Captain",
   "phone": "1234567890"
 }
+
+### PUBLIC API ###
+POST http://localhost:3000/login/user
+Content-Type: application/json
+
+{
+  "username": "syahirah",
+  "password": "syahirah12345"
+}
+
