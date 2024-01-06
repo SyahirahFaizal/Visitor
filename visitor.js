@@ -75,6 +75,15 @@ class Visitor {
 			return { status: "Visitor deleted!"}
 		}
 
+		static async viewAll() {
+			try {
+				const allVisitors = await visitors.find().toArray();
+				return allVisitors;
+			} catch (error) {
+				console.error(error);
+				return { status: "An error occurred while fetching visitors" };
+			}
+
 	}
 
 
