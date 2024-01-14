@@ -331,95 +331,41 @@ app.patch('/user/update', async (req, res) => {
 
 })
 
-// /**
-//  * @swagger
-//  * /visitor/update:
-//  *   patch:
-//  *     security:
-//  *      - jwt: []
-//  *     description: Visitor Update
-//  *     tags:
-//  *     - Modification
-//  *     requestBody:
-//  *       required: true
-//  *       content:
-//  *         application/json:
-//  *           schema: 
-//  *             type: object
-//  *             properties:
-//  *               username: 
-//  *                 type: string
-//  *               password: 
-//  *                 type: string
-//  *               name: 
-//  *                 type: string
-//  *               age:
-//  *                 type: integer
-//  *               gender:
-//  *                 type: string
-//  *               relation:
-//  *                 type: string
-//  *               telno:
-//  *                 type: string
-//  *     responses:
-//  *       200:
-//  *         description: Successful updated
-//  *       401:
-//  *         description: There is an error during updating , Please try again
-//  */
 
-// app.patch('/visitor/update', async (req, res) => {
-// 	console.log(req.body);
-
-// 	if (req.user.rank == "officer"){
-// 		const update = await Visitor.update(req.body.username, req.body.name, req.body.age, req.body.gender, req.body.relation, req.body.telno);
-// 		res.status(200).send(update)
-// 	}
-// 	else{
-// 		res.status(403).send("You are unauthorized")
-// 	}
-// })
-
-// /**
-//  * @swagger
-//  * /visitorinfo/update:
-//  *   patch:
-//  *     security:
-//  *      - jwt: []
-//  *     description: VisitorInfo Update
-//  *     tags:
-//  *     - Modification
-//  *     requestBody:
-//  *       required: true
-//  *       content:
-//  *         application/json:
-//  *           schema: 
-//  *             type: object
-//  *             properties:
-//  *               logno:
-//  *                 type: integer
-//  *               username: 
-//  *                 type: string
-//  *               pettype: 
-//  *                 type: string
-//  *               dateofvisit:
-//  *                 type: string
-//  *               timein:
-//  *                 type: string
-//  *               timeout:
-//  *                 type: string
-//  *               purpose:
-//  *                 type: string
-//  *               apartmentno:
-//  *                 type: string
+/**
+ * @swagger
+ * /viewuser:
+ *   get:
+ *     summary: View all visitors
+ *     tags: [User]
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: List of all visitors
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 $ref: '#/components/schemas/User'
+ *       500:
+ *         description: Error occurred while fetching visitors
+ */
 
 
-//  *     responses:
-//  *       200:
-//  *         description: Successful updated
-//  *       401:
-//  *         description: There is an error during updating , Please try again
-//  */
+// Protected route for viewing visitors - token required
+app.get('/viewuser', verifyToken, async (req, res) => {
+	try {
+	  const visitors = db.collection('users');
+	  const results = await users.find().toArray();
+  
+	  res.json(results);
+	} catch (error) {
+	  res.status(500).json({ error: 'An error occurred while fetching visitors' });
+	}
+  });
+  
 
  app.patch('/register/visitorinfo', async (req, res) => {
 	console.log(req.body);
