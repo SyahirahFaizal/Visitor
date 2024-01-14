@@ -133,6 +133,59 @@ class UserManager {
   
 	return { status: "User deleted!" };
   }
+
+  
+  static async viewAll() {
+    try {
+        const allUser = await users.find().toArray();
+        return allUser;
+    } catch (error) {
+        console.error(error);
+        return { status: "An error occurred while fetching visitors" };
+    }
+}
+
+static async issuePass(username, issuedBy, validUntil) {
+    try {
+        const userPasses = db.collection('users');
+
+        const newPass = {
+            userId: username, // Assuming 'username' is the visitorId
+            issuedBy,
+            validUntil,
+            issuedAt: new Date(),
+        };
+
+        // Insert the new pass into the 'visitorpasses' collection
+        await userPasses.insertOne(newPass);
+
+        // Update the visitor document with the issued pass details
+        await users.updateOne({ username: username }, { $set: { passDetails: newPass } });
+
+        return { status: "Pass issued successfully" };
+    } catch (error) {
+        console.error(error);
+        return { status: "An error occurred while issuing pass", details: error.message };
+    }
+}
+
+static async retrievePass(username) {
+    try {
+        const userPasses = db.collection('users');
+
+        // Retrieve the pass for the given visitor
+        const pass = await userPassesPasses.findOne({ userId: username });
+
+        if (!pass) {
+            return { status: "Pass not found for the visitor" };
+        }
+
+        return pass;
+    } catch (error) {
+        console.error(error);
+        return { status: "An error occurred while retrieving pass", details: error.message };
+    }
+}
 }
 
 module.exports = UserManager;

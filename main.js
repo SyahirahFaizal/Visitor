@@ -1,7 +1,6 @@
 const MongoClient = require("mongodb").MongoClient;
 const User = require("./user");
 const Visitor = require("./visitor.js");
-
 const VisitorInfo = require("./visitorinfo")
 const {checkAccountLockout} = require("./middleware");
 
@@ -125,50 +124,50 @@ app.post('/login/user', checkAccountLockout, async (req, res) => {
 	});
 })
 
-/**
- * @swagger
- * /login/visitor:
- *   post:
- *     description: Visitor Login
- *     tags:
- *     - Authentication
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema: 
- *             type: object
- *             properties:
- *               username: 
- *                 type: string
- *               password: 
- *                 type: string
- *     responses:
- *       200:
- *         description: Successful login
- *       401:
- *         description: Invalid username or password
- */
+// /**
+//  * @swagger
+//  * /login/visitor:
+//  *   post:
+//  *     description: Visitor Login
+//  *     tags:
+//  *     - Authentication
+//  *     requestBody:
+//  *       required: true
+//  *       content:
+//  *         application/json:
+//  *           schema: 
+//  *             type: object
+//  *             properties:
+//  *               username: 
+//  *                 type: string
+//  *               password: 
+//  *                 type: string
+//  *     responses:
+//  *       200:
+//  *         description: Successful login
+//  *       401:
+//  *         description: Invalid username or password
+//  */
 
-app.post('/login/visitor', async (req, res) => {
-	console.log(req.body);
+// app.post('/login/visitor', async (req, res) => {
+// 	console.log(req.body);
 
-	let user = await Visitor.login(req.body.username, req.body.password);
+// 	let user = await Visitor.login(req.body.username, req.body.password);
 
-	if (user.status == ("invalid username" || "invalid password")) {
-		res.status(401).send("invalid username or password");
-		return
-	}
+// 	if (user.status == ("invalid username" || "invalid password")) {
+// 		res.status(401).send("invalid username or password");
+// 		return
+// 	}
 
-	res.status(200).json({
-		username: user.username,
-		name: user.Name,
-		age: user.Age,
-		gender: user.Gender,
-		relation: user.Relation,
-		token: generateAccessToken({ username: user.username })
-	});
-})
+// 	res.status(200).json({
+// 		username: user.username,
+// 		name: user.Name,
+// 		age: user.Age,
+// 		gender: user.Gender,
+// 		relation: user.Relation,
+// 		token: generateAccessToken({ username: user.username })
+// 	});
+// })
 
 /**
  * @swagger
@@ -212,51 +211,51 @@ app.post('/register/user', async (req, res) => {
 	res.json({reg})
 })
 
-/**
- * @swagger
- * /register/visitor:
- *   post:
- *     description: Visitor Registration
- *     tags:
- *     - Registration
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema: 
- *             type: object
- *             properties:
- *               username: 
- *                 type: string
- *               password: 
- *                 type: string
- *               name: 
- *                 type: string
- *               age:
- *                 type: integer
- *               gender:
- *                 type: string
- *               relation:
- *                 type: string
- *               telno:
- *                 type: string
- *     responses:
- *       200:
- *         description: Successful registered
- *       401:
- *         description: There is an error during registration , Please try again
- */
+// /**
+//  * @swagger
+//  * /register/visitor:
+//  *   post:
+//  *     description: Visitor Registration
+//  *     tags:
+//  *     - Registration
+//  *     requestBody:
+//  *       required: true
+//  *       content:
+//  *         application/json:
+//  *           schema: 
+//  *             type: object
+//  *             properties:
+//  *               username: 
+//  *                 type: string
+//  *               password: 
+//  *                 type: string
+//  *               name: 
+//  *                 type: string
+//  *               age:
+//  *                 type: integer
+//  *               gender:
+//  *                 type: string
+//  *               relation:
+//  *                 type: string
+//  *               telno:
+//  *                 type: string
+//  *     responses:
+//  *       200:
+//  *         description: Successful registered
+//  *       401:
+//  *         description: There is an error during registration , Please try again
+//  */
 
-app.post('/register/visitor', async (req, res) => {
-	console.log(req.body);
+// app.post('/register/visitor', async (req, res) => {
+// 	console.log(req.body);
 
-		const reg = await Visitor.register(req.body.username, req.body.password, req.body.name, req.body.age, req.body.gender, req.body.relation, req.body.telno);
-		console.log(reg);
+// 		const reg = await Visitor.register(req.body.username, req.body.password, req.body.name, req.body.age, req.body.gender, req.body.relation, req.body.telno);
+// 		console.log(reg);
 	
-	res.json({reg})
-})
+// 	res.json({reg})
+// })
 
-app.use(verifyToken);
+// app.use(verifyToken);
 
 /**
  * @swagger
@@ -358,132 +357,95 @@ app.patch('/user/update', async (req, res) => {
 
 })
 
-/**
- * @swagger
- * /visitor/update:
- *   patch:
- *     security:
- *      - jwt: []
- *     description: Visitor Update
- *     tags:
- *     - Modification
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema: 
- *             type: object
- *             properties:
- *               username: 
- *                 type: string
- *               password: 
- *                 type: string
- *               name: 
- *                 type: string
- *               age:
- *                 type: integer
- *               gender:
- *                 type: string
- *               relation:
- *                 type: string
- *               telno:
- *                 type: string
- *     responses:
- *       200:
- *         description: Successful updated
- *       401:
- *         description: There is an error during updating , Please try again
- */
+// /**
+//  * @swagger
+//  * /visitor/update:
+//  *   patch:
+//  *     security:
+//  *      - jwt: []
+//  *     description: Visitor Update
+//  *     tags:
+//  *     - Modification
+//  *     requestBody:
+//  *       required: true
+//  *       content:
+//  *         application/json:
+//  *           schema: 
+//  *             type: object
+//  *             properties:
+//  *               username: 
+//  *                 type: string
+//  *               password: 
+//  *                 type: string
+//  *               name: 
+//  *                 type: string
+//  *               age:
+//  *                 type: integer
+//  *               gender:
+//  *                 type: string
+//  *               relation:
+//  *                 type: string
+//  *               telno:
+//  *                 type: string
+//  *     responses:
+//  *       200:
+//  *         description: Successful updated
+//  *       401:
+//  *         description: There is an error during updating , Please try again
+//  */
 
-app.patch('/visitor/update', async (req, res) => {
-	console.log(req.body);
+// app.patch('/visitor/update', async (req, res) => {
+// 	console.log(req.body);
 
-	if (req.user.rank == "officer"){
-		const update = await Visitor.update(req.body.username, req.body.name, req.body.age, req.body.gender, req.body.relation, req.body.telno);
-		res.status(200).send(update)
-	}
-	else{
-		res.status(403).send("You are unauthorized")
-	}
-})
+// 	if (req.user.rank == "officer"){
+// 		const update = await Visitor.update(req.body.username, req.body.name, req.body.age, req.body.gender, req.body.relation, req.body.telno);
+// 		res.status(200).send(update)
+// 	}
+// 	else{
+// 		res.status(403).send("You are unauthorized")
+// 	}
+// })
 
-/**
- * @swagger
- * /pet/update:
- *   patch:
- *     security:
- *      - jwt: []
- *     description: Pet Update
- *     tags:
- *     - Modification
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema: 
- *             type: object
- *             properties:
- *               petno: 
- *                 type: string
- *               name: 
- *                 type: string
- *               species: 
- *                 type: string
- *               age:
- *                 type: integer
- *               gender:
- *                 type: string
- *               characteristic:
- *                 type: string
- *     responses:
- *       200:
- *         description: Successful updated
- *       401:
- *         description: There is an error during updating , Please try again
- */
-
- 
-
-/**
- * @swagger
- * /visitorinfo/update:
- *   patch:
- *     security:
- *      - jwt: []
- *     description: VisitorInfo Update
- *     tags:
- *     - Modification
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema: 
- *             type: object
- *             properties:
- *               logno:
- *                 type: integer
- *               username: 
- *                 type: string
- *               pettype: 
- *                 type: string
- *               dateofvisit:
- *                 type: string
- *               timein:
- *                 type: string
- *               timeout:
- *                 type: string
- *               purpose:
- *                 type: string
- *               apartmentno:
- *                 type: string
+// /**
+//  * @swagger
+//  * /visitorinfo/update:
+//  *   patch:
+//  *     security:
+//  *      - jwt: []
+//  *     description: VisitorInfo Update
+//  *     tags:
+//  *     - Modification
+//  *     requestBody:
+//  *       required: true
+//  *       content:
+//  *         application/json:
+//  *           schema: 
+//  *             type: object
+//  *             properties:
+//  *               logno:
+//  *                 type: integer
+//  *               username: 
+//  *                 type: string
+//  *               pettype: 
+//  *                 type: string
+//  *               dateofvisit:
+//  *                 type: string
+//  *               timein:
+//  *                 type: string
+//  *               timeout:
+//  *                 type: string
+//  *               purpose:
+//  *                 type: string
+//  *               apartmentno:
+//  *                 type: string
 
 
- *     responses:
- *       200:
- *         description: Successful updated
- *       401:
- *         description: There is an error during updating , Please try again
- */
+//  *     responses:
+//  *       200:
+//  *         description: Successful updated
+//  *       401:
+//  *         description: There is an error during updating , Please try again
+//  */
 
  app.patch('/register/visitorinfo', async (req, res) => {
 	console.log(req.body);
@@ -533,77 +495,77 @@ app.delete('/delete/user', async (req, res) => {
 	}
 })
 
-/**
- * @swagger
- * /delete/visitor:
- *   delete:
- *     security:
- *      - jwt: []
- *     description: Delete Visitor
- *     tags:
- *     - Remove(delete)
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema: 
- *             type: object
- *             properties:
- *               username: 
- *                 type: string
- *               
- *     responses:
- *       200:
- *         description: Successful deleted
- *       401:
- *         description: There is an error during deleting , Please try again
- */
+// /**
+//  * @swagger
+//  * /delete/visitor:
+//  *   delete:
+//  *     security:
+//  *      - jwt: []
+//  *     description: Delete Visitor
+//  *     tags:
+//  *     - Remove(delete)
+//  *     requestBody:
+//  *       required: true
+//  *       content:
+//  *         application/json:
+//  *           schema: 
+//  *             type: object
+//  *             properties:
+//  *               username: 
+//  *                 type: string
+//  *               
+//  *     responses:
+//  *       200:
+//  *         description: Successful deleted
+//  *       401:
+//  *         description: There is an error during deleting , Please try again
+//  */
 
-app.delete('/delete/visitor', async (req, res) => {
-	if (req.user.rank == "officer"){
-		const del = await Visitor.delete(req.body.username)
-		res.status(200).send(del)
-	}
-	else{
-		res.status(403).send("You are unauthorized")
-	}
-})
+// app.delete('/delete/visitor', async (req, res) => {
+// 	if (req.user.rank == "officer"){
+// 		const del = await Visitor.delete(req.body.username)
+// 		res.status(200).send(del)
+// 	}
+// 	else{
+// 		res.status(403).send("You are unauthorized")
+// 	}
+// })
 
-/**
- * @swagger
- * /delete/visitorinfo:
- *   delete:
- *     security:
- *      - jwt: []
- *     description: Delete VisitorInfo
- *     tags:
- *     - Remove(delete)
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema: 
- *             type: object
- *             properties:
- *               logno: 
- *                 type: integer
- *               
- *     responses:
- *       200:
- *         description: Successful delete
- *       401:
- *         description: There is an error during deleting , Please try again
- */
+// /**
+//  * @swagger
+//  * /delete/visitorinfo:
+//  *   delete:
+//  *     security:
+//  *      - jwt: []
+//  *     description: Delete VisitorInfo
+//  *     tags:
+//  *     - Remove(delete)
+//  *     requestBody:
+//  *       required: true
+//  *       content:
+//  *         application/json:
+//  *           schema: 
+//  *             type: object
+//  *             properties:
+//  *               logno: 
+//  *                 type: integer
+//  *               
+//  *     responses:
+//  *       200:
+//  *         description: Successful delete
+//  *       401:
+//  *         description: There is an error during deleting , Please try again
+//  */
 
- app.delete('/delete/visitorinfo', async (req, res) => {
-	if (req.user.rank == "officer" || "security"){
-		const del = await VisitorInfo.delete(req.body.logno)
-		res.status(200).send(del)
-	}
-	else{
-		res.status(403).send("You are unauthorized")
-	}
-})
+//  app.delete('/delete/visitorinfo', async (req, res) => {
+// 	if (req.user.rank == "officer" || "security"){
+// 		const del = await VisitorInfo.delete(req.body.logno)
+// 		res.status(200).send(del)
+// 	}
+// 	else{
+// 		res.status(403).send("You are unauthorized")
+// 	}
+// })
 
 /**
  * @swagger
@@ -643,9 +605,9 @@ app.delete('/delete/visitor', async (req, res) => {
  */
 
 // Protected route for viewing visitors - token required
-app.get('/viewvisitor', verifyToken, async (req, res) => {
+app.get('/viewuser', verifyToken, async (req, res) => {
     try {
-        const visitors = db.collection('visitor');
+        const visitors = db.collection('users');
         const results = await visitors.find().toArray();
         res.json(results);
     } catch (error) {
@@ -690,20 +652,20 @@ app.get('/viewvisitor', verifyToken, async (req, res) => {
 
 // Admin issue visitor pass
 // Admin Issue Visitor Pass
-app.post('/issuevisitorpass', verifyToken, async (req, res) => {
-	const { visitorId, issuedBy, validUntil } = req.body;
+app.post('/issueuserass', verifyToken, async (req, res) => {
+	const { userId, issuedBy, validUntil } = req.body;
   
 	try {
-	  const visitorPasses = db.collection('visitor');
+	  const userPasses = db.collection('users');
   
 	  const newPass = {
-		visitorId,
+		userId,
 		issuedBy,
 		validUntil,
 		issuedAt: new Date(),
 	  };
   
-	  await visitorPasses.insertOne(newPass);
+	  await userPasses.insertOne(newPass);
 	  res.status(201).json({ message: 'Visitor pass issued successfully' });
 	} catch (error) {
 	  console.error('Issue Pass Error:', error.message);
@@ -739,11 +701,11 @@ app.post('/issuevisitorpass', verifyToken, async (req, res) => {
 
 //Visitor to Retrieve Their Pass
 // Visitor Retrieve Pass
-app.post('/retrievevisitorpass', verifyToken, async (req, res) => {
+app.post('/retrieveuserpass', verifyToken, async (req, res) => {
     const { username } = req.body;
 
     try {
-        const passDetails = await Visitor.retrievePass(username);
+        const passDetails = await User.retrievePass(username);
 
         if (passDetails.status === "Pass not found for the visitor") {
             res.status(404).json({ message: 'Pass not found for the visitor' });

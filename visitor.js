@@ -7,28 +7,28 @@ class Visitor {
         visitors = await conn.db("VISITOR").collection("visitor");
     }
 
-    static async register(username, password, name, age, gender, relation, telno) {
-        const res = await visitors.findOne({ username: username });
+    // static async register(username, password, name, age, gender, relation, telno) {
+    //     const res = await visitors.findOne({ username: username });
 
-        if (res) {
-            return { status: "duplicate username" };
-        }
+    //     if (res) {
+    //         return { status: "duplicate username" };
+    //     }
 
-        const salt = await bcrypt.genSalt(10);
-        const hash = await bcrypt.hash(password, salt);
+    //     const salt = await bcrypt.genSalt(10);
+    //     const hash = await bcrypt.hash(password, salt);
 
-        visitors.insertOne({
-            "username": username,
-            "Password": password,
-            "HashedPassword": hash,
-            "Name": name,
-            "Age": age,
-            "Gender": gender,
-            "Relation": relation,
-            "PhoneNo": telno
-        });
-        return { status: "Successfully register Visitor" };
-    }
+    //     visitors.insertOne({
+    //         "username": username,
+    //         "Password": password,
+    //         "HashedPassword": hash,
+    //         "Name": name,
+    //         "Age": age,
+    //         "Gender": gender,
+    //         "Relation": relation,
+    //         "PhoneNo": telno
+    //     });
+    //     return { status: "Successfully register Visitor" };
+    // }
 
     static async login(username, password) {
         const result = await visitors.findOne({ username: username });
@@ -45,23 +45,23 @@ class Visitor {
         return result;
     }
 
-    static async update(username, name, age, gender, relation, telno) {
-        visitors.updateOne({ username: username }, {
-            $set: {
-                "Name": name,
-                "Age": age,
-                "Gender": gender,
-                "Relation": relation,
-                "PhoneNo": telno
-            }
-        });
-        return { status: "Information updated" };
-    }
+    // static async update(username, name, age, gender, relation, telno) {
+    //     visitors.updateOne({ username: username }, {
+    //         $set: {
+    //             "Name": name,
+    //             "Age": age,
+    //             "Gender": gender,
+    //             "Relation": relation,
+    //             "PhoneNo": telno
+    //         }
+    //     });
+    //     return { status: "Information updated" };
+    // }
 
-    static async delete(username) {
-        visitors.deleteOne({ username: username });
-        return { status: "Visitor deleted!" };
-    }
+    // static async delete(username) {
+    //     visitors.deleteOne({ username: username });
+    //     return { status: "Visitor deleted!" };
+    // }
 
     static async viewAll() {
         try {
