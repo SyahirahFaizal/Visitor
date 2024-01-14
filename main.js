@@ -670,6 +670,7 @@ app.post('/issueuserpass', verifyToken, async (req, res) => {
  *       '500':
  *         description: Error occurred while retrieving the pass
  */
+
 // Retrieve Visitor Pass
 app.get('/retrieveuserpass/:userId', verifyToken, async (req, res) => {
     const userId = req.params.userId;

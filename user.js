@@ -170,22 +170,23 @@ static async issueuserpass(username, issuedBy, validUntil) {
 }
 
 static async retrieveuserpass(username) {
-    try {
-        const userPasses = db.collection('users');
+  try {
+      const userPasses = db.collection('users');
 
-        // Retrieve the pass for the given visitor
-        const pass = await userPassesPasses.findOne({ userId: username });
+      // Retrieve the pass for the given visitor
+      const pass = await userPasses.findOne({ userId: username });
 
-        if (!pass) {
-            return { status: "Pass not found for the visitor" };
-        }
+      if (!pass) {
+          return { status: "Pass not found for the visitor" };
+      }
 
-        return pass;
-    } catch (error) {
-        console.error(error);
-        return { status: "An error occurred while retrieving pass", details: error.message };
-    }
+      return pass;
+  } catch (error) {
+      console.error(error);
+      return { status: "An error occurred while retrieving pass", details: error.message };
+  }
 }
+
 }
 
 module.exports = UserManager;
