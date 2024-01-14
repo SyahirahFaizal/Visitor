@@ -49,7 +49,8 @@ const options = {
     apis: ['./main.js'],
 };
 const swaggerSpec = swaggerJsdoc(options);
-app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
+app.use('/api-docs', swaggerUi.serve);
+app.get('/api-docs', swaggerUi.setup(swaggerSpec));
 
 /**
  * @swagger
@@ -332,40 +333,40 @@ app.patch('/user/update', async (req, res) => {
 })
 
 
-/**
- * @swagger
- * /viewuser:
- *   get:
- *     summary: View all visitors
- *     tags: [User]
- *     security:
- *       - bearerAuth: []
- *     responses:
- *       200:
- *         description: List of all visitors
- *         content:
- *           application/json:
- *             schema:
- *               type: array
- *               items:
- *                 $ref: '#/components/schemas/User'
- *       500:
- *         description: Error occurred while fetching visitors
- */
+// /**
+//  * @swagger
+//  * /viewuser:
+//  *   get:
+//  *     summary: View all visitors
+//  *     tags: [User]
+//  *     security:
+//  *       - bearerAuth: []
+//  *     responses:
+//  *       200:
+//  *         description: List of all visitors
+//  *         content:
+//  *           application/json:
+//  *             schema:
+//  *               type: array
+//  *               items:
+//  *                 $ref: '#/components/schemas/User'
+//  *       500:
+//  *         description: Error occurred while fetching visitors
+//  */
 
 
-// Protected route for viewing visitors - token required
-app.get('/viewvisitor', verifyToken, async (req, res) => {
-	try {
-	  const visitors = db.collection('visitors');
-	  const results = await visitors.find().toArray();
-  
-	  res.json(results);
-	} catch (error) {
-	  res.status(500).json({ error: 'An error occurred while fetching visitors' });
-	}
-  });
-  
+// // Protected route for viewing visitors - token required
+// app.get('/viewvisitor', verifyToken, async (req, res) => {
+//   try {
+//     const visitors = db.collection('visitors');
+//     const results = await visitors.find().toArray();
+
+//     res.json(results);
+//   } catch (error) {
+//     res.status(500).json({ error: 'An error occurred while fetching visitors' });
+//   }
+// });
+
   
 
  app.patch('/register/visitorinfo', async (req, res) => {
