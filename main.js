@@ -586,16 +586,16 @@ app.delete('/delete/user', async (req, res) => {
  *               items:
  *                 type: object
  *                  properties:
- *               	 username: 
- *                 	   type: string
- *               	 password: 
- *                 	   type: string
- *               	 name: 
- *                 	   type: string
- *               	 rank:
- *                 	   type: string
- *               	 phone:
- *                 	   type: string
+ *               	     username: 
+ *                 	       type: string
+ *               	     password: 
+ *                 	       type: string
+ *               	     name: 
+ *                 	       type: string
+ *               	     rank:
+ *                 	       type: string
+ *               	     phone:
+ *                 	       type: string
  *     responses:
  *       401:
  *         description: Unauthorized access
