@@ -585,19 +585,18 @@ app.delete('/delete/user', async (req, res) => {
  *               type: array
  *               items:
  *                 type: object
- *                 properties:
- *                   username:
- *                     type: string
- *                   name:
- *                     type: string
- *                   age:
- *                     type: integer
- *                   gender:
- *                     type: string
- *                   relation:
- *                     type: string
- *                   telno:
- *                     type: string
+ *                  properties:
+ *               username: 
+ *                 type: string
+ *               password: 
+ *                 type: string
+ *               name: 
+ *                 type: string
+ *               rank:
+ *                 type: string
+ *               phone:
+ *                 type: string
+ *     responses:
  *       401:
  *         description: Unauthorized access
  *       500:
@@ -605,9 +604,9 @@ app.delete('/delete/user', async (req, res) => {
  */
 
 // Protected route for viewing visitors - token required
-app.get('/viewuser', verifyToken, async (req, res) => {
+app.get('/view/user', verifyToken, async (req, res) => {
     try {
-        const visitors = db.collection('users');
+        const users = db.collection('users');
         const results = await User.find().toArray();
         res.json(results);
     } catch (error) {

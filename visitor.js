@@ -63,57 +63,57 @@ class Visitor {
     //     return { status: "Visitor deleted!" };
     // }
 
-    static async viewAll() {
-        try {
-            const allVisitors = await visitors.find().toArray();
-            return allVisitors;
-        } catch (error) {
-            console.error(error);
-            return { status: "An error occurred while fetching visitors" };
-        }
-    }
+    // static async viewAll() {
+    //     try {
+    //         const allVisitors = await visitors.find().toArray();
+    //         return allVisitors;
+    //     } catch (error) {
+    //         console.error(error);
+    //         return { status: "An error occurred while fetching visitors" };
+    //     }
+    // }
 
-	static async issuePass(username, issuedBy, validUntil) {
-        try {
-            const visitorPasses = db.collection('visitor');
+	// static async issuePass(username, issuedBy, validUntil) {
+    //     try {
+    //         const visitorPasses = db.collection('visitor');
 
-            const newPass = {
-                visitorId: username, // Assuming 'username' is the visitorId
-                issuedBy,
-                validUntil,
-                issuedAt: new Date(),
-            };
+    //         const newPass = {
+    //             visitorId: username, // Assuming 'username' is the visitorId
+    //             issuedBy,
+    //             validUntil,
+    //             issuedAt: new Date(),
+    //         };
 
-            // Insert the new pass into the 'visitorpasses' collection
-            await visitorPasses.insertOne(newPass);
+    //         // Insert the new pass into the 'visitorpasses' collection
+    //         await visitorPasses.insertOne(newPass);
 
-            // Update the visitor document with the issued pass details
-            await visitors.updateOne({ username: username }, { $set: { passDetails: newPass } });
+    //         // Update the visitor document with the issued pass details
+    //         await visitors.updateOne({ username: username }, { $set: { passDetails: newPass } });
 
-            return { status: "Pass issued successfully" };
-        } catch (error) {
-            console.error(error);
-            return { status: "An error occurred while issuing pass", details: error.message };
-        }
-    }
+    //         return { status: "Pass issued successfully" };
+    //     } catch (error) {
+    //         console.error(error);
+    //         return { status: "An error occurred while issuing pass", details: error.message };
+    //     }
+    // }
 
-	static async retrievePass(username) {
-        try {
-            const visitorPasses = db.collection('visitor');
+	// static async retrievePass(username) {
+    //     try {
+    //         const visitorPasses = db.collection('visitor');
 
-            // Retrieve the pass for the given visitor
-            const pass = await visitorPasses.findOne({ visitorId: username });
+    //         // Retrieve the pass for the given visitor
+    //         const pass = await visitorPasses.findOne({ visitorId: username });
 
-            if (!pass) {
-                return { status: "Pass not found for the visitor" };
-            }
+    //         if (!pass) {
+    //             return { status: "Pass not found for the visitor" };
+    //         }
 
-            return pass;
-        } catch (error) {
-            console.error(error);
-            return { status: "An error occurred while retrieving pass", details: error.message };
-        }
-    }
+    //         return pass;
+    //     } catch (error) {
+    //         console.error(error);
+    //         return { status: "An error occurred while retrieving pass", details: error.message };
+    //     }
+    // }
 }
 
 module.exports = Visitor;
