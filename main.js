@@ -587,63 +587,63 @@ app.get('/view/user', verifyToken, async (req, res) => {
 });
 
 
-/**
- * @swagger
- * /issueuserpass:
- *   post:
- *     summary: Issue a visitor pass
- *     tags: 
- *       - Pass
- *     security:
- *       - jwt: []
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             type: object
- *             required:
- *               - userId
- *               - issuedBy
- *               - validUntil
- *             properties:
- *               userId:
- *                 type: string
- *               issuedBy:
- *                 type: string
- *               validUntil:
- *                 type: string
- *                 format: date
- *     responses:
- *       201:
- *         description: Visitor pass issued successfully
- *       500:
- *         description: Error occurred while issuing the pass
- */
+// /**
+//  * @swagger
+//  * /issueuserpass:
+//  *   post:
+//  *     summary: Issue a visitor pass
+//  *     tags: 
+//  *       - Pass
+//  *     security:
+//  *       - jwt: []
+//  *     requestBody:
+//  *       required: true
+//  *       content:
+//  *         application/json:
+//  *           schema:
+//  *             type: object
+//  *             required:
+//  *               - userId
+//  *               - issuedBy
+//  *               - validUntil
+//  *             properties:
+//  *               userId:
+//  *                 type: string
+//  *               issuedBy:
+//  *                 type: string
+//  *               validUntil:
+//  *                 type: string
+//  *                 format: date
+//  *     responses:
+//  *       201:
+//  *         description: Visitor pass issued successfully
+//  *       500:
+//  *         description: Error occurred while issuing the pass
+//  */
 
 
-// Admin issue visitor pass
-// Admin Issue Visitor Pass
-app.post('/issueuserpass', verifyToken, async (req, res) => {
-	const { userId, issuedBy, validUntil } = req.body;
+// // Admin issue visitor pass
+// // Admin Issue Visitor Pass
+// app.post('/issueuserpass', verifyToken, async (req, res) => {
+// 	const { userId, issuedBy, validUntil } = req.body;
   
-	try {
-	  const userPasses = db.collection('users');
+// 	try {
+// 	  const userPasses = db.collection('users');
   
-	  const newPass = {
-		userId,
-		issuedBy,
-		validUntil,
-		issuedAt: new Date(),
-	  };
+// 	  const newPass = {
+// 		userId,
+// 		issuedBy,
+// 		validUntil,
+// 		issuedAt: new Date(),
+// 	  };
   
-	  await userPasses.insertOne(newPass);
-	  res.status(201).json({ message: 'Visitor pass issued successfully' });
-	} catch (error) {
-	  console.error('Issue Pass Error:', error.message);
-	  res.status(500).json({ error: 'An error occurred while issuing the pass', details: error.message });
-	}
-  });
+// 	  await userPasses.insertOne(newPass);
+// 	  res.status(201).json({ message: 'Visitor pass issued successfully' });
+// 	} catch (error) {
+// 	  console.error('Issue Pass Error:', error.message);
+// 	  res.status(500).json({ error: 'An error occurred while issuing the pass', details: error.message });
+// 	}
+//   });
 
   
   
