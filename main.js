@@ -569,7 +569,7 @@ app.delete('/delete/user', async (req, res) => {
 
 /**
  * @swagger
- * /viewvisitor:
+ * /viewuser:
  *   get:
  *     summary: View all visitors
  *     tags: 
