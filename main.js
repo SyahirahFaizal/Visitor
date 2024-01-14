@@ -587,13 +587,13 @@ app.get('/view/user', verifyToken, async (req, res) => {
 });
 
 
-
 /**
  * @swagger
  * /issueuserpass:
  *   post:
  *     summary: Issue a visitor pass
- *     tags: [Pass]
+ *     tags: 
+ *       - Pass
  *     security:
  *       - jwt: []
  *     requestBody:
@@ -603,11 +603,11 @@ app.get('/view/user', verifyToken, async (req, res) => {
  *           schema:
  *             type: object
  *             required:
- *               - visitorId
+ *               - userId
  *               - issuedBy
  *               - validUntil
  *             properties:
- *               visitorId:
+ *               userId:
  *                 type: string
  *               issuedBy:
  *                 type: string
