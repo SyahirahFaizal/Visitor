@@ -541,50 +541,50 @@ app.delete('/delete/user', async (req, res) => {
 // 	}
 // })
 
-/**
- * @swagger
- * /view/user:
- *   get:
- *     summary: View all users
- *     tags: 
- *       - User
- *     security:
- *       - jwt: []
- *     responses:
- *       200:
- *         description: List of all users
- *         content:
- *           application/json:
- *             schema:
- *               type: array
- *               items:
- *                 type: object
- *                   properties:
- *                     username: 
- *                       type: string
- *                     password: 
- *                       type: string
- *                     name: 
- *                       type: string
- *                     rank:
- *                       type: string
- *                     phone:
- *                       type: string
- *       401:
- *         description: Unauthorized access
- *       500:
- *         description: Error occurred while fetching users
- */
+// /**
+//  * @swagger
+//  * /view/user:
+//  *   get:
+//  *     summary: View all users
+//  *     tags: 
+//  *       - User
+//  *     security:
+//  *       - jwt: []
+//  *     responses:
+//  *       200:
+//  *         description: List of all users
+//  *         content:
+//  *           application/json:
+//  *             schema:
+//  *               type: array
+//  *               items:
+//  *                 type: object
+//  *                   properties:
+//  *                     username: 
+//  *                       type: string
+//  *                     password: 
+//  *                       type: string
+//  *                     name: 
+//  *                       type: string
+//  *                     rank:
+//  *                       type: string
+//  *                     phone:
+//  *                       type: string
+//  *       401:
+//  *         description: Unauthorized access
+//  *       500:
+//  *         description: Error occurred while fetching users
+//  */
 
-// Protected route for viewing users - token required
-app.get('/view/user', verifyToken, async (req, res) => {
-    try {
-        const users = await db.collection('users').find().toArray();
-        res.json(users);
-    } catch (error) {
-        res.status(500).json({ error: 'An error occurred while fetching users' });
-    }
-});
+// // Protected route for viewing users - token required
+// app.get('/view/user', verifyToken, async (req, res) => {
+//     try {
+//         const users = await db.collection('users').find().toArray();
+//         res.json(users);
+//     } catch (error) {
+//         res.status(500).json({ error: 'An error occurred while fetching users' });
+//     }
+// });
 
 
 // /**
