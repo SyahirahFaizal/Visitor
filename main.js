@@ -185,51 +185,51 @@ app.post('/register/user', async (req, res) => {
 	res.json({reg})
 })
 
-// /**
-//  * @swagger
-//  * /register/visitor:
-//  *   post:
-//  *     description: Visitor Registration
-//  *     tags:
-//  *     - Registration
-//  *     requestBody:
-//  *       required: true
-//  *       content:
-//  *         application/json:
-//  *           schema: 
-//  *             type: object
-//  *             properties:
-//  *               username: 
-//  *                 type: string
-//  *               password: 
-//  *                 type: string
-//  *               name: 
-//  *                 type: string
-//  *               age:
-//  *                 type: integer
-//  *               gender:
-//  *                 type: string
-//  *               relation:
-//  *                 type: string
-//  *               telno:
-//  *                 type: string
-//  *     responses:
-//  *       200:
-//  *         description: Successful registered
-//  *       401:
-//  *         description: There is an error during registration , Please try again
-//  */
+/**
+ * @swagger
+ * /register/visitor:
+ *   post:
+ *     description: Visitor Registration
+ *     tags:
+ *     - Registration
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema: 
+ *             type: object
+ *             properties:
+ *               username: 
+ *                 type: string
+ *               password: 
+ *                 type: string
+ *               name: 
+ *                 type: string
+ *               age:
+ *                 type: integer
+ *               gender:
+ *                 type: string
+ *               relation:
+ *                 type: string
+ *               telno:
+ *                 type: string
+ *     responses:
+ *       200:
+ *         description: Successful registered
+ *       401:
+ *         description: There is an error during registration , Please try again
+ */
 
-// app.post('/register/visitor', async (req, res) => {
-// 	console.log(req.body);
+app.post('/register/visitor', async (req, res) => {
+	console.log(req.body);
 
-// 		const reg = await Visitor.register(req.body.username, req.body.password, req.body.name, req.body.age, req.body.gender, req.body.relation, req.body.telno);
-// 		console.log(reg);
+		const reg = await Visitor.register(req.body.username, req.body.password, req.body.name, req.body.age, req.body.gender, req.body.relation, req.body.telno);
+		console.log(reg);
 	
-// 	res.json({reg})
-// })
+	res.json({reg})
+})
 
-// app.use(verifyToken);
+app.use(verifyToken);
 
 /**
  * @swagger
@@ -355,16 +355,17 @@ app.patch('/user/update', async (req, res) => {
 
 
 // Protected route for viewing visitors - token required
-app.get('/viewuser', verifyToken, async (req, res) => {
+app.get('/viewvisitor', verifyToken, async (req, res) => {
 	try {
-	  const visitors = db.collection('users');
-	  const results = await User.find().toArray();
+	  const visitors = db.collection('visitors');
+	  const results = await visitors.find().toArray();
   
 	  res.json(results);
 	} catch (error) {
 	  res.status(500).json({ error: 'An error occurred while fetching visitors' });
 	}
   });
+  
   
 
  app.patch('/register/visitorinfo', async (req, res) => {
