@@ -46,7 +46,7 @@ const options = {
             }],
         },
     },
-    apis: ['./main.js'],
+    apis: ['./main.js','./user.js', './visitor.js', './visitorinfo.js'],
 };
 const swaggerSpec = swaggerJsdoc(options);
 app.use('/api-docs', swaggerUi.serve);
