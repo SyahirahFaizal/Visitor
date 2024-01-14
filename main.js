@@ -646,49 +646,6 @@ app.post('/issueuserpass', verifyToken, async (req, res) => {
   });
 
   
-/**
- * @swagger
- * /retrieveuserpass/{userId}:
- *   get:
- *     summary: Retrieve a visitor pass
- *     tags: 
- *       - Pass
- *     security:
- *       - jwt: []
- *     parameters:
- *       - in: path
- *         name: userId
- *         required: true
- *         schema:
- *           type: string
- *         description: The visitor ID
- *     responses:
- *       '200':
- *         description: Visitor pass details
- *       '404':
- *         description: No pass found for this visitor
- *       '500':
- *         description: Error occurred while retrieving the pass
- */
-
-// Retrieve Visitor Pass
-app.get('/retrieveuserpass/:userId', verifyToken, async (req, res) => {
-    const userId = req.params.userId;
-
-    try {
-        const passDetails = await User.retrievePass(userId);
-
-        if (!passDetails) {
-            res.status(404).json({ message: 'Pass not found for the visitor' });
-        } else {
-            res.json(passDetails);
-        }
-    } catch (error) {
-        console.error('Retrieve Pass Error:', error.message);
-        res.status(500).json({ error: 'An error occurred while retrieving the pass', details: error.message });
-    }
-});
-
   
   
 
