@@ -145,7 +145,7 @@ class UserManager {
     }
 }
 
-static async issuePass(username, issuedBy, validUntil) {
+static async issueuserpass(username, issuedBy, validUntil) {
     try {
         const userPasses = db.collection('users');
 
@@ -169,7 +169,7 @@ static async issuePass(username, issuedBy, validUntil) {
     }
 }
 
-static async retrievePass(username) {
+static async retrieveuserpass(username) {
     try {
         const userPasses = db.collection('users');
 

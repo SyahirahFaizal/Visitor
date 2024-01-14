@@ -569,7 +569,7 @@ app.delete('/delete/user', async (req, res) => {
 
 /**
  * @swagger
- * /viewuser:
+ * /view/user:
  *   get:
  *     summary: View all visitors
  *     tags: 
@@ -586,16 +586,16 @@ app.delete('/delete/user', async (req, res) => {
  *               items:
  *                 type: object
  *                  properties:
- *               username: 
- *                 type: string
- *               password: 
- *                 type: string
- *               name: 
- *                 type: string
- *               rank:
- *                 type: string
- *               phone:
- *                 type: string
+ *               	 username: 
+ *                 	   type: string
+ *               	 password: 
+ *                 	   type: string
+ *               	 name: 
+ *                 	   type: string
+ *               	 rank:
+ *                 	   type: string
+ *               	 phone:
+ *                 	   type: string
  *     responses:
  *       401:
  *         description: Unauthorized access
@@ -617,7 +617,7 @@ app.get('/view/user', verifyToken, async (req, res) => {
 
 /**
  * @swagger
- * /issuevisitorpass:
+ * /issueuserpass:
  *   post:
  *     summary: Issue a visitor pass
  *     tags: [Pass]
@@ -651,7 +651,7 @@ app.get('/view/user', verifyToken, async (req, res) => {
 
 // Admin issue visitor pass
 // Admin Issue Visitor Pass
-app.post('/issueuserass', verifyToken, async (req, res) => {
+app.post('/issueuserpass', verifyToken, async (req, res) => {
 	const { userId, issuedBy, validUntil } = req.body;
   
 	try {
@@ -675,7 +675,7 @@ app.post('/issueuserass', verifyToken, async (req, res) => {
   
 /**
  * @swagger
- * /retrievepass/{visitorId}:
+ * /retrieveuserpass/{UserId}:
  *   get:
  *     summary: Retrieve a visitor pass
  *     tags: [Pass]
