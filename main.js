@@ -1,78 +1,52 @@
-const MongoClient = require("mongodb").MongoClient;
-const User = require("./user");
-const Visitor = require("./visitor.js");
-const VisitorInfo = require("./visitorinfo")
-const {checkAccountLockout} = require("./middleware");
-
-
-MongoClient.connect(
-	// TODO: Connection 
-	"mongodb://syahirahmfaizal:241018atz@ac-zp8a4we-shard-00-00.szywh0c.mongodb.net:27017,ac-zp8a4we-shard-00-01.szywh0c.mongodb.net:27017,ac-zp8a4we-shard-00-02.szywh0c.mongodb.net:27017/?replicaSet=atlas-i0x38w-shard-0&ssl=true&authSource=admin", 
-	
-).catch(err => {
-	console.error(err.stack)
-	process.exit(1)
-}).then(async (client) => {
-	console.log('Connected to MongoDB');
-	User.injectDB(client);
-	Visitor.injectDB(client);
-	VisitorInfo.injectDB(client);
-})
-
-const express = require('express')
-const app = express()
-const port = process.env.PORT || 3000
-
-const jwt = require ('jsonwebtoken');
-function generateAccessToken(payload){
-	return jwt.sign(payload, "secretcode", { expiresIn: '7d' });
-}
-
-function verifyToken(req, res, next) {
-	const authHeader = req.headers['authorization']
-	const token = authHeader && authHeader.split(' ')[1]
-
-	if (token == null) return res.sendStatus(401)
-
-	jwt.verify(token, "secretcode", (err, user) => {
-		console.log(err);
-
-		if (err) return res.sendStatus(403)
-
-		req.user = user
-
-		next()
-	})
-}
-
-app.use(express.json())
-app.use(express.urlencoded({ extended: false }))
-
-
+const express = require('express');
+const MongoClient = require('mongodb').MongoClient;
+const jwt = require('jsonwebtoken');
 const swaggerUi = require('swagger-ui-express');
 const swaggerJsdoc = require('swagger-jsdoc');
+const { checkAccountLockout, verifyToken } = require('./middleware');
+const User = require('./user');
+const Visitor = require('./visitor.js');
+const VisitorInfo = require('./visitorinfo');
+
+const app = express();
+const port = process.env.PORT || 3000;
+
+// MongoDB Connection
+MongoClient.connect(
+    'mongodb://syahirahmfaizal:241018atz@ac-zp8a4we-shard-00-00.szywh0c.mongodb.net:27017,ac-zp8a4we-shard-00-01.szywh0c.mongodb.net:27017,ac-zp8a4we-shard-00-02.szywh0c.mongodb.net:27017/?replicaSet=atlas-i0x38w-shard-0&ssl=true&authSource=admin',
+).catch((err) => {
+    console.error(err.stack);
+    process.exit(1);
+}).then(async (client) => {
+    console.log('Connected to MongoDB');
+    User.injectDB(client);
+    Visitor.injectDB(client);
+    VisitorInfo.injectDB(client);
+});
+
+// Swagger Documentation Configuration
 const options = {
-	definition: {
-		openapi: '3.0.0',
-		info: {
-			title: 'Group 4 Apartment Visiting System',
-			version: '1.0.0',
-		},
-		components:{
-			securitySchemes:{
-				jwt:{
-					type: 'http',
-					scheme: 'bearer',
-					in: "header",
-					bearerFormat: 'JWT'
-				}
-			},
-		security:[{
-			"jwt": []
-		}]
-		}
-	},
-	apis: ['./main.js'], 
+    definition: {
+        openapi: '3.0.0',
+        info: {
+            title: 'Visitor Management System',
+            version: '1.0.0',
+        },
+        components: {
+            securitySchemes: {
+                jwt: {
+                    type: 'http',
+                    scheme: 'bearer',
+                    in: 'header',
+                    bearerFormat: 'JWT',
+                },
+            },
+            security: [{
+                jwt: [],
+            }],
+        },
+    },
+    apis: ['./main.js'],
 };
 const swaggerSpec = swaggerJsdoc(options);
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
@@ -696,16 +670,14 @@ app.post('/issueuserpass', verifyToken, async (req, res) => {
  *         description: Error occurred while retrieving the pass
  */
 
-
-//Visitor to Retrieve Their Pass
-// Visitor Retrieve Pass
-app.post('/retrieveuserpass', verifyToken, async (req, res) => {
-    const { username } = req.body;
+//RETRIEVE USER PASS
+app.get('/retrieveuserpass/:userId', verifyToken, async (req, res) => {
+    const userId = req.params.userId;
 
     try {
-        const passDetails = await User.retrievePass(username);
+        const passDetails = await User.retrievePass(userId);
 
-        if (passDetails.status === "Pass not found for the visitor") {
+        if (!passDetails) {
             res.status(404).json({ message: 'Pass not found for the visitor' });
         } else {
             res.json(passDetails);
@@ -715,6 +687,7 @@ app.post('/retrieveuserpass', verifyToken, async (req, res) => {
         res.status(500).json({ error: 'An error occurred while retrieving the pass', details: error.message });
     }
 });
+
 
   
   
