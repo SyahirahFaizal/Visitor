@@ -17,7 +17,6 @@ MongoClient.connect(
 	console.log('Connected to MongoDB');
 	User.injectDB(client);
 	Visitor.injectDB(client);
-	Pet.injectDB(client);
 	VisitorInfo.injectDB(client);
 })
 
@@ -312,54 +311,7 @@ app.use(verifyToken);
 	}
 })
 
-/**
- * @swagger
- * /register/pet:
- *   post:
- *     security:
- *      - jwt: []
- *     description: Pet Registration
- *     tags:
- *     - Registration 
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema: 
- *             type: object
- *             properties:
- *               petno: 
- *                 type: string
- *               name: 
- *                 type: string
- *               species: 
- *                 type: string
- *               age:
- *                 type: integer
- *               gender:
- *                 type: string
- *               characteristic:
- *                 type: string
- *              
- *     responses:
- *       200:
- *         description: Successful registered
- *       401:
- *         description: There is an error during registration , Please try again
- */
 
- app.post('/register/pet', async (req,res)=>{
-	console.log(req.body)
-
-	if (req.user.rank == "officer"){
-		const reg = await Inmate.register(req.body.petno, req.body.name, req.body.species, req.body.age, req.body.gender, req.body.characteristic );
-		res.status(200).send(reg)
-	}
-	else{
-		res.status(403).send("You are unauthorized")
-	}
-
-})
 
 /**
  * @swagger
@@ -456,50 +408,7 @@ app.patch('/visitor/update', async (req, res) => {
 	}
 })
 
-/**
- * @swagger
- * /pet/update:
- *   patch:
- *     security:
- *      - jwt: []
- *     description: Pet Update
- *     tags:
- *     - Modification
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema: 
- *             type: object
- *             properties:
- *               petno: 
- *                 type: string
- *               name: 
- *                 type: string
- *               species: 
- *                 type: string
- *               age:
- *                 type: integer
- *               gender:
- *                 type: string
- *               characteristic:
- *                 type: string
- *     responses:
- *       200:
- *         description: Successful updated
- *       401:
- *         description: There is an error during updating , Please try again
- */
 
- app.patch('/inmate/update', async (req, res) => {
-	if (req.user.rank == "officer"){
-		const reg = await Inmate.register(req.body.petno, req.body.name, req.body.species, req.body.age, req.body.gender, req.body.characteristic );
-		res.status(200).send(reg)
-	}
-	else{
-		res.status(403).send("You are unauthorized")
-	}
-})
 
 /**
  * @swagger
@@ -626,41 +535,6 @@ app.delete('/delete/visitor', async (req, res) => {
 	}
 })
 
-/**
- * @swagger
- * /delete/Pet:
- *   delete:
- *     security:
- *      - jwt: []
- *     description: Delete Pet
- *     tags:
- *     - Remove(delete)
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema: 
- *             type: object
- *             properties:
- *               inmateno: 
- *                 type: string
- *               
- *     responses:
- *       200:
- *         description: Successful deleted
- *       401:
- *         description: There is an error during deleting , Please try again
- */
-
- app.delete('/delete/pet', async (req, res) => {
-	if (req.user.rank == "officer"){
-		const del = await Pet.delete(req.body.petno)
-		res.status(200).send(del)
-	}
-	else{
-		res.status(403).send("You are unauthorized")
-	}
-})
 
 /**
  * @swagger
