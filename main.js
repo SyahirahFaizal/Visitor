@@ -17,7 +17,6 @@ MongoClient.connect(
 	console.log('Connected to MongoDB');
 	User.injectDB(client);
 	Visitor.injectDB(client);
-	Pet.injectDB(client);
 	VisitorInfo.injectDB(client);
 })
 
