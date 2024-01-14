@@ -608,7 +608,7 @@ app.delete('/delete/user', async (req, res) => {
 app.get('/viewuser', verifyToken, async (req, res) => {
     try {
         const visitors = db.collection('users');
-        const results = await users.find().toArray();
+        const results = await User.find().toArray();
         res.json(results);
     } catch (error) {
         res.status(500).json({ error: 'An error occurred while fetching visitors' });
