@@ -358,7 +358,7 @@ app.patch('/user/update', async (req, res) => {
 app.get('/viewuser', verifyToken, async (req, res) => {
 	try {
 	  const visitors = db.collection('users');
-	  const results = await users.find().toArray();
+	  const results = await User.find().toArray();
   
 	  res.json(results);
 	} catch (error) {
