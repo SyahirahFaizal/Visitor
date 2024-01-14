@@ -648,15 +648,16 @@ app.post('/issueuserpass', verifyToken, async (req, res) => {
   
 /**
  * @swagger
- * /retrieveuserpass/{UserId}:
+ * /retrieveuserpass/{userId}:
  *   get:
  *     summary: Retrieve a visitor pass
- *     tags: [Pass]
- *      security:
+ *     tags: 
+ *       - Pass
+ *     security:
  *       - jwt: []
  *     parameters:
  *       - in: path
- *         name: visitorId
+ *         name: userId
  *         required: true
  *         schema:
  *           type: string
@@ -670,7 +671,7 @@ app.post('/issueuserpass', verifyToken, async (req, res) => {
  *         description: Error occurred while retrieving the pass
  */
 
-//RETRIEVE USER PASS
+// Retrieve Visitor Pass
 app.get('/retrieveuserpass/:userId', verifyToken, async (req, res) => {
     const userId = req.params.userId;
 
@@ -687,7 +688,6 @@ app.get('/retrieveuserpass/:userId', verifyToken, async (req, res) => {
         res.status(500).json({ error: 'An error occurred while retrieving the pass', details: error.message });
     }
 });
-
 
   
   
