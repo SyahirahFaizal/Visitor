@@ -108,6 +108,6 @@ class Visitor {
             return null;
         }
     }
-
+}
 
 module.exports = Visitor;
