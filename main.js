@@ -692,6 +692,69 @@ app.post('/issuepass', verifyToken, async (req, res) => {
     }
 });
 
+/**
+ * @swagger
+ * /retrievepass/{logno}:
+ *   get:
+ *     summary: Retrieve pass for a visitor
+ *     tags:
+ *       - Visitor
+ *     security:
+ *       - jwt: []
+ *     parameters:
+ *       - in: path
+ *         name: logno
+ *         schema:
+ *           type: integer
+ *         required: true
+ *         description: Log number of the visitor pass
+ *     responses:
+ *       200:
+ *         description: Successful retrieval
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 logno:
+ *                   type: integer
+ *                 username:
+ *                   type: string
+ *                 pettype:
+ *                   type: string
+ *                 dateofvisit:
+ *                   type: string
+ *                 timein:
+ *                   type: string
+ *                 timeout:
+ *                   type: string
+ *                 purpose:
+ *                   type: string
+ *                 apartmentno:
+ *                   type: string
+ *       401:
+ *         description: Unauthorized access
+ *       404:
+ *         description: Pass not found
+ *       500:
+ *         description: Error occurred while retrieving pass
+ */
+app.get('/retrievepass/:logno', verifyToken, async (req, res) => {
+    try {
+        const logNo = parseInt(req.params.logno);
+        const pass = await VisitorInfo.retrievePass(logNo);
+
+        if (pass.status) {
+            return res.status(404).json({ error: pass.status });
+        }
+
+        res.json(pass);
+    } catch (error) {
+        console.error('Error retrieving pass:', error);
+        res.status(500).json({ error: 'An error occurred while retrieving pass' });
+    }
+});
+
 
 
 

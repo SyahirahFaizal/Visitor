@@ -108,6 +108,22 @@ class Visitor {
             return null;
         }
     }
+
+    static async retrievePass(logNo) {
+        try {
+            const passCollection = passes; // Assuming passes is the MongoDB collection
+            const pass = await passCollection.findOne({ logno: logNo });
+
+            if (!pass) {
+                return { status: "Pass not found" };
+            }
+
+            return pass;
+        } catch (error) {
+            console.error(error);
+            return { status: "An error occurred while retrieving pass" };
+        }
+    }
 }
 
 module.exports = Visitor;
