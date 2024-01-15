@@ -65,14 +65,15 @@ class Visitor {
 
     static async viewAll() {
         try {
-            const allVisitors = await visitors.find().toArray();
+            const visitorsCollection = client.db().collection('visitor'); // Assuming client is the MongoDB client
+            const allVisitors = await visitorsCollection.find().toArray();
             return allVisitors;
         } catch (error) {
             console.error(error);
             return { status: "An error occurred while fetching visitors" };
         }
     }
-
+    
 	static async issuePass(username, issuedBy, validUntil) {
         try {
             const visitorPasses = db.collection('visitor');
