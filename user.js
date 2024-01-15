@@ -133,6 +133,20 @@ class UserManager {
   
 	return { status: "User deleted!" };
   }
+
+  // user.js
+
+static async viewAll() {
+  try {
+      const usersCollection = client.db().collection('user'); // Assuming client is the MongoDB client
+      const allUsers = await usersCollection.find().toArray();
+      return allUsers;
+  } catch (error) {
+      console.error(error);
+      return { status: "An error occurred while fetching users" };
+  }
+}
+
 }
 
 module.exports = UserManager;

@@ -756,7 +756,49 @@ app.get('/retrievepass/:logno', verifyToken, async (req, res) => {
 });
 
 
-
+/**
+ * @swagger
+ * /viewusers:
+ *   get:
+ *     summary: View all users
+ *     tags:
+ *       - User
+ *     security:
+ *       - jwt: []
+ *     responses:
+ *       200:
+ *         description: List of all users
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 type: object
+ *                 properties:
+ *                   username:
+ *                     type: string
+ *                   name:
+ *                     type: string
+ *                   officerno:
+ *                     type: string
+ *                   rank:
+ *                     type: string
+ *                   phone:
+ *                     type: string
+ *       401:
+ *         description: Unauthorized access
+ *       500:
+ *         description: Error occurred while fetching users
+ */
+app.get('/viewusers', verifyToken, async (req, res) => {
+    try {
+        const allUsers = await User.viewAll();
+        res.json(allUsers);
+    } catch (error) {
+        console.error('Error fetching users:', error);
+        res.status(500).json({ error: 'An error occurred while fetching users' });
+    }
+});
 
 app.listen(port, () => {
 	console.log(`Example app listening at http://localhost:${port}`)
