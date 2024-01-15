@@ -620,6 +620,79 @@ app.get('/viewvisitor', verifyToken, async (req, res) => {
     }
 });
 
+/**
+ * @swagger
+ * /issuepass:
+ *   post:
+ *     summary: Issue a pass to a visitor
+ *     tags: 
+ *       - Visitor
+ *     security:
+ *       - jwt: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               username:
+ *                 type: string
+ *               passType:
+ *                 type: string
+ *               duration:
+ *                 type: string
+ *     responses:
+ *       200:
+ *         description: Pass issued successfully
+ *       401:
+ *         description: Unauthorized access
+ *       403:
+ *         description: Visitor not found or invalid pass type
+ *       500:
+ *         description: Error occurred while issuing a pass
+ */
+
+// Protected route for issuing a pass to a visitor - token required
+app.post('/issuepass', verifyToken, async (req, res) => {
+    try {
+        const { username, passType, duration } = req.body;
+
+        // Check if the user issuing the pass is authorized
+        if (req.user.rank !== "officer" && req.user.rank !== "security") {
+            return res.status(403).json({ error: "You are unauthorized to issue a pass." });
+        }
+
+        // Check if the visitor exists
+        const visitor = await Visitor.getByUsername(username);
+        if (!visitor) {
+            return res.status(403).json({ error: "Visitor not found." });
+        }
+
+        // Check if the pass type is valid
+        const validPassTypes = ['temporary', 'permanent'];
+        if (!validPassTypes.includes(passType)) {
+            return res.status(403).json({ error: "Invalid pass type. Allowed types: temporary, permanent." });
+        }
+
+        // Perform pass issuance logic here (e.g., update visitor's pass information in the database)
+
+        // Example: Update the visitor's pass information in the database
+        const visitors = req.app.locals.client.db().collection('visitor');
+        const updatedVisitor = await visitors.findOneAndUpdate(
+            { username: username },
+            { $set: { passType: passType, passDuration: duration } },
+            { returnDocument: 'after' }
+        );
+
+        res.status(200).json({ message: "Pass issued successfully", visitor: updatedVisitor.value });
+    } catch (error) {
+        console.error('Error issuing pass:', error); // Log the error
+        res.status(500).json({ error: 'An error occurred while issuing a pass' });
+    }
+});
+
+
 
 
 app.listen(port, () => {

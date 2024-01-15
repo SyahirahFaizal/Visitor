@@ -65,7 +65,7 @@ class Visitor {
 
     static async viewAll() {
         try {
-            const visitorsCollection = client.db().collection('visitor'); // Assuming client is the MongoDB client
+            const visitorsCollection = visitors; // Assuming visitors is the MongoDB collection
             const allVisitors = await visitorsCollection.find().toArray();
             return allVisitors;
         } catch (error) {
@@ -74,47 +74,40 @@ class Visitor {
         }
     }
     
-	static async issuePass(username, issuedBy, validUntil) {
+    static injectDB(client) {
+        if (visitors) {
+            return;
+        }
         try {
-            const visitorPasses = db.collection('visitor');
-
-            const newPass = {
-                visitorId: username, // Assuming 'username' is the visitorId
-                issuedBy,
-                validUntil,
-                issuedAt: new Date(),
-            };
-
-            // Insert the new pass into the 'visitorpasses' collection
-            await visitorPasses.insertOne(newPass);
-
-            // Update the visitor document with the issued pass details
-            await visitors.updateOne({ username: username }, { $set: { passDetails: newPass } });
-
-            return { status: "Pass issued successfully" };
-        } catch (error) {
-            console.error(error);
-            return { status: "An error occurred while issuing pass", details: error.message };
+            visitors = client.db().collection('visitor');
+        } catch (e) {
+            console.error(`Unable to establish a collection handle in visitorModel: ${e}`);
         }
     }
 
-	static async retrievePass(username) {
+    static async getByUsername(username) {
         try {
-            const visitorPasses = db.collection('visitor');
-
-            // Retrieve the pass for the given visitor
-            const pass = await visitorPasses.findOne({ visitorId: username });
-
-            if (!pass) {
-                return { status: "Pass not found for the visitor" };
-            }
-
-            return pass;
-        } catch (error) {
-            console.error(error);
-            return { status: "An error occurred while retrieving pass", details: error.message };
+            return await visitors.findOne({ username: username });
+        } catch (e) {
+            console.error(`Error occurred while retrieving visitor by username: ${e}`);
+            return null;
         }
     }
-}
+
+    // Add a method to update pass information for a visitor
+    static async updatePass(username, passType, duration) {
+        try {
+            const updatedVisitor = await visitors.findOneAndUpdate(
+                { username: username },
+                { $set: { passType: passType, passDuration: duration } },
+                { returnDocument: 'after' }
+            );
+            return updatedVisitor.value;
+        } catch (e) {
+            console.error(`Error occurred while updating visitor pass: ${e}`);
+            return null;
+        }
+    }
+
 
 module.exports = Visitor;
