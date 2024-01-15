@@ -612,13 +612,15 @@ app.delete('/delete/visitor', async (req, res) => {
 // Protected route for viewing visitors - token required
 app.get('/viewvisitor', verifyToken, async (req, res) => {
     try {
-        const visitors = db.collection('visitor');
-        const results = await Visitor.find().toArray();
+        const visitors = client.db().collection('visitor'); // Use client.db() instead of just db
+        const results = await visitors.find().toArray();
         res.json(results);
     } catch (error) {
+        console.error('Error fetching visitors:', error); // Log the error
         res.status(500).json({ error: 'An error occurred while fetching visitors' });
     }
 });
+
 
 
 
