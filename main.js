@@ -608,11 +608,10 @@ app.delete('/delete/visitor', async (req, res) => {
  *       500:
  *         description: Error occurred while fetching visitors
  */
-
 // Protected route for viewing visitors - token required
 app.get('/viewvisitor', verifyToken, async (req, res) => {
     try {
-        const visitors = client.db().collection('visitor'); // Use client.db() instead of just db
+        const visitors = req.app.locals.client.db().collection('visitor'); // Access db through req.app.locals.client
         const results = await visitors.find().toArray();
         res.json(results);
     } catch (error) {
@@ -620,7 +619,6 @@ app.get('/viewvisitor', verifyToken, async (req, res) => {
         res.status(500).json({ error: 'An error occurred while fetching visitors' });
     }
 });
-
 
 
 
