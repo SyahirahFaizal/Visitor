@@ -613,7 +613,7 @@ app.delete('/delete/visitor', async (req, res) => {
 app.get('/viewvisitor', verifyToken, async (req, res) => {
     try {
         const visitors = db.collection('visitor');
-        const results = await visitors.find().toArray();
+        const results = await Visitor.find().toArray();
         res.json(results);
     } catch (error) {
         res.status(500).json({ error: 'An error occurred while fetching visitors' });
